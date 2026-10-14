@@ -1,0 +1,1883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#4f46e5">
+<link rel="manifest" href='data:application/manifest+json,{"name":"KalaSetu","short_name":"KalaSetu","display":"standalone","start_url":".","background_color":"%234f46e5","theme_color":"%234f46e5"}'>
+<title>KalaSetu — Simple AI Marketplace for Artisans</title>
+<style>
+  :root{
+    --ink:#1e293b; --mut:#64748b; --bg:#f6f7fb; --card:#ffffff; --line:#e2e8f0;
+    --pri:#4f46e5; --pri2:#4338ca; --acc:#f59e0b; --grn:#16a34a; --red:#dc2626; --blu:#2563eb;
+    --prid:#eef2ff; --accd:#fffbeb; --grnd:#f0fdf4; --redd:#fef2f2; --blud:#eff6ff;
+    --rad:16px; --sh:0 1px 3px rgba(15,23,42,.08),0 4px 14px rgba(15,23,42,.06);
+  }
+  *{box-sizing:border-box; margin:0; padding:0}
+  html{-webkit-text-size-adjust:100%}
+  body{font-family:'Segoe UI',system-ui,-apple-system,Roboto,'Noto Sans Devanagari','Noto Sans Telugu','Noto Sans Tamil',Arial,sans-serif; background:var(--bg); color:var(--ink); font-size:16px; line-height:1.5; padding-bottom:80px}
+  #app{max-width:1060px; margin:0 auto; padding:0 14px}
+
+  header{position:sticky; top:0; z-index:50; background:#fff; border-bottom:1px solid var(--line)}
+  .hwrap{max-width:1060px; margin:0 auto; padding:8px 14px; display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+  .logo{display:flex; align-items:center; gap:8px; font-weight:800; font-size:19px; color:var(--pri2); cursor:pointer; white-space:nowrap}
+  .logo .lmark{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#4f46e5,#f59e0b);display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px}
+  .spacer{flex:1}
+  .hbtn{border:1px solid var(--line); background:#fff; border-radius:10px; padding:7px 12px; font-size:14px; cursor:pointer; color:var(--ink); white-space:nowrap}
+  .hbtn:hover{background:#f8fafc}
+  .bell{position:relative}
+  .bell .dot{position:absolute; top:-5px; right:-5px; background:var(--red); color:#fff; font-size:10px; min-width:17px; height:17px; border-radius:9px; display:flex; align-items:center; justify-content:center; font-weight:700; padding:0 3px}
+  select.lang{border:1px solid var(--line); border-radius:10px; padding:7px 8px; font-size:14px; background:#fff; cursor:pointer; font-weight:700; color:var(--pri2); max-width:130px}
+  .navlinks{display:flex; gap:6px; flex-wrap:wrap}
+  .nlink{padding:7px 12px; border-radius:10px; font-size:14px; cursor:pointer; color:var(--mut); font-weight:700; white-space:nowrap}
+  .nlink:hover{background:#f1f5f9; color:var(--ink)}
+  .nlink.on{background:var(--prid); color:var(--pri2)}
+
+  .card{background:var(--card); border:1px solid var(--line); border-radius:var(--rad); box-shadow:var(--sh); padding:18px; margin-top:16px}
+  .grid{display:grid; gap:14px}
+  .g2{grid-template-columns:repeat(auto-fill,minmax(300px,1fr))}
+  .g3{grid-template-columns:repeat(auto-fill,minmax(230px,1fr))}
+  .g4{grid-template-columns:repeat(auto-fill,minmax(210px,1fr))}
+  .row{display:flex; align-items:center; gap:10px; flex-wrap:wrap}
+  .between{display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap}
+  h1{font-size:26px; margin:18px 0 4px}
+  h2{font-size:20px; margin-bottom:8px}
+  h3{font-size:16px}
+  .sub{color:var(--mut); font-size:14px}
+  .mt{margin-top:14px} .mt8{margin-top:8px} .mb{margin-bottom:12px}
+  hr{border:0; border-top:1px solid var(--line); margin:14px 0}
+  .right{margin-left:auto}
+  .center{text-align:center}
+
+  .btn{display:inline-flex; align-items:center; gap:8px; border:0; border-radius:13px; padding:13px 22px; font-size:16px; font-weight:800; cursor:pointer; background:var(--pri); color:#fff; transition:.15s}
+  .btn:hover{background:var(--pri2)}
+  .btn.sec{background:#fff; color:var(--ink); border:1.5px solid var(--line)}
+  .btn.sec:hover{background:#f8fafc}
+  .btn.grn{background:var(--grn)} .btn.grn:hover{background:#15803d}
+  .btn.red{background:var(--red)} .btn.red:hover{background:#b91c1c}
+  .btn.amb{background:var(--acc); color:#3b2f00} .btn.amb:hover{background:#d97706}
+  .btn.sm{padding:9px 15px; font-size:14px; border-radius:10px}
+  .btn.big{width:100%; justify-content:center; font-size:18px; padding:16px}
+  .btn:disabled{opacity:.5; cursor:not-allowed}
+
+  .b{display:inline-flex; align-items:center; gap:5px; font-size:12px; font-weight:800; padding:4px 11px; border-radius:99px; white-space:nowrap}
+  .b.pending{background:var(--accd); color:#92400e; border:1px solid #fde68a}
+  .b.approved{background:var(--grnd); color:#166534; border:1px solid #bbf7d0}
+  .b.rejected{background:var(--redd); color:#991b1b; border:1px solid #fecaca}
+  .b.info{background:var(--blud); color:#1e40af; border:1px solid #bfdbfe}
+  .b.grey{background:#f1f5f9; color:#475569; border:1px solid var(--line)}
+  .b.sms{background:var(--redd); color:#991b1b; border:1px solid #fecaca}
+  .b.wa{background:#e7f8ee; color:#0f766e; border:1px solid #a7f3d0}
+  .b.inapp{background:var(--prid); color:var(--pri2); border:1px solid #c7d2fe}
+
+  label{display:block; font-size:14px; font-weight:800; color:var(--mut); margin:14px 0 6px}
+  input[type=text],input[type=tel],input[type=number],select,textarea{width:100%; border:1.5px solid var(--line); border-radius:12px; padding:12px 14px; font-size:16px; font-family:inherit; background:#fff; color:var(--ink); outline:none}
+  input:focus,select:focus,textarea:focus{border-color:var(--pri)}
+  textarea{resize:vertical; min-height:80px}
+
+  /* landing */
+  .hero{background:linear-gradient(135deg,#312e81 0%,#4f46e5 55%,#7c3aed 100%); border-radius:22px; color:#fff; padding:40px 30px; margin-top:18px; position:relative; overflow:hidden}
+  .hero:before{content:'🧵'; position:absolute; font-size:150px; right:26px; top:-18px; opacity:.14; transform:rotate(-12deg)}
+  .hero h1{color:#fff; font-size:32px; margin:10px 0 8px; max-width:600px}
+  .hero p{opacity:.94; max-width:560px; font-size:16.5px}
+  .hero .btn{background:#fff; color:var(--pri2); margin-top:16px}
+  .rolecard{cursor:pointer; transition:.15s; text-align:center; padding:26px 12px}
+  .rolecard:hover{transform:translateY(-3px); border-color:var(--pri); box-shadow:0 8px 24px rgba(79,70,229,.14)}
+  .rolecard .ric{width:60px; height:60px; margin:0 auto 10px; border-radius:18px; display:flex; align-items:center; justify-content:center; font-size:29px}
+  .howrow{display:flex; align-items:center; gap:12px; padding:12px 0}
+  .howrow .hic{font-size:28px}
+  .demo-cred{background:var(--accd); border:1px dashed #f59e0b; text-align:center}
+
+  /* big tiles (artisan home) */
+  .tile{cursor:pointer; text-align:center; padding:30px 10px}
+  .tile:hover{transform:translateY(-3px); border-color:var(--pri); box-shadow:0 8px 24px rgba(79,70,229,.14)}
+  .tile .tic{font-size:42px}
+  .tile .tl1{font-weight:800; font-size:17px; margin-top:8px}
+  .tile .tl2{font-size:13px; color:var(--mut); margin-top:2px}
+
+  /* auth */
+  .authbox{max-width:460px; margin:36px auto}
+  .otprow{display:flex; gap:9px; justify-content:center; margin:16px 0}
+  .otp{width:48px; height:56px; text-align:center; font-size:24px; font-weight:800; border:2px solid var(--line); border-radius:12px}
+  .otp:focus{border-color:var(--pri)}
+  .demoOtp{background:var(--blud); border:1px dashed var(--blu); border-radius:12px; padding:12px; text-align:center; font-weight:800; color:#1e40af; margin-top:12px; font-size:17px}
+
+  /* products */
+  .pcard{padding:0; overflow:hidden; cursor:pointer; transition:.15s}
+  .pcard:hover{transform:translateY(-3px); box-shadow:0 10px 26px rgba(15,23,42,.13)}
+  .pimg{width:100%; aspect-ratio:1/1; object-fit:cover; display:block; background:#f1f5f9}
+  .pbody{padding:13px 15px}
+  .pname{font-weight:800; font-size:15px; line-height:1.35}
+  .pprice{font-size:18px; font-weight:800; color:var(--pri2); margin-top:4px}
+  .pmeta{font-size:12.5px; color:var(--mut); margin-top:4px}
+  .thumb{width:64px; height:64px; border-radius:12px; object-fit:cover; border:1px solid var(--line); flex-shrink:0}
+
+  /* wizard */
+  .steps{display:flex; gap:8px; margin:6px 0 2px}
+  .stp{flex:1; text-align:center; font-size:15px; font-weight:800; color:var(--mut); padding:12px 4px; border-radius:12px; background:#f1f5f9}
+  .stp.on{background:var(--pri); color:#fff}
+  .stp.done{background:var(--grnd); color:#166534}
+  .upbox{border:2px dashed #c7d2fe; border-radius:16px; padding:40px 20px; text-align:center; background:var(--prid); cursor:pointer}
+  .upbox:hover{border-color:var(--pri)}
+  .big{font-size:44px}
+  .cmp{position:relative; border-radius:16px; overflow:hidden; max-width:460px; margin:10px auto; border:1px solid var(--line)}
+  .cmp img{width:100%; display:block}
+  .cmp .orig{position:absolute; inset:0; overflow:hidden; border-right:2px solid #fff}
+  .cmp .tagb{position:absolute; bottom:8px; font-size:11px; font-weight:800; background:rgba(0,0,0,.55); color:#fff; padding:2px 9px; border-radius:99px}
+  input[type=range].cmpR{width:100%; max-width:460px; display:block; margin:6px auto}
+  .errbox{background:var(--redd); border:1.5px solid #fecaca; color:#991b1b; border-radius:12px; padding:14px; font-weight:800; margin-top:12px; text-align:center; font-size:15.5px}
+  .okbox{background:var(--grnd); border:1.5px solid #bbf7d0; color:#166534; border-radius:12px; padding:10px 14px; font-weight:800; margin-top:12px; text-align:center}
+  .mic{width:86px; height:86px; border-radius:50%; background:var(--red); color:#fff; font-size:34px; border:0; cursor:pointer; box-shadow:0 6px 18px rgba(220,38,38,.4); transition:.15s}
+  .mic:hover{transform:scale(1.06)}
+  .mic.rec{animation:pulse 1s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(220,38,38,.5)}70%{box-shadow:0 0 0 18px rgba(220,38,38,0)}100%{box-shadow:0 0 0 0 rgba(220,38,38,0)}}
+  .micwrap{text-align:center; padding:16px 0}
+  .lchip{padding:9px 15px; border-radius:99px; border:1.5px solid var(--line); background:#fff; font-weight:800; font-size:14px; cursor:pointer; color:var(--ink)}
+  .lchip.on{background:var(--pri); color:#fff; border-color:var(--pri)}
+  .chiprow{display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin:10px 0}
+  .aigen{background:linear-gradient(135deg,var(--prid),#fdf4ff); border:1px solid #c7d2fe; border-radius:14px; padding:16px}
+  .pricecard{background:linear-gradient(135deg,#fffbeb,#fef3c7); border:1px solid #fcd34d}
+  .bignum{font-size:36px; font-weight:800; color:#92400e}
+  .srcnote{font-size:12px; color:#92700c; margin-top:6px}
+
+  /* timeline */
+  .tl{position:relative; padding-left:26px}
+  .tl:before{content:''; position:absolute; left:8px; top:6px; bottom:6px; width:2px; background:var(--line)}
+  .tli{position:relative; padding:6px 0}
+  .tli:before{content:''; position:absolute; left:-24px; top:11px; width:12px; height:12px; border-radius:50%; background:#cbd5e1; border:2px solid #fff; box-shadow:0 0 0 2px #cbd5e1}
+  .tli.done:before{background:var(--grn); box-shadow:0 0 0 2px var(--grn)}
+
+  /* alerts */
+  .notif{display:flex; gap:12px; align-items:flex-start; padding:13px 6px; border-bottom:1px solid var(--line)}
+  .notif:last-child{border-bottom:0}
+  .nic{width:38px; height:38px; border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:18px; flex-shrink:0}
+  .ntime{font-size:11.5px; color:var(--mut)}
+  .pillTabs{display:flex; gap:8px; flex-wrap:wrap; margin-top:14px}
+  .ptab{padding:9px 17px; border-radius:99px; border:1.5px solid var(--line); background:#fff; font-size:14px; font-weight:800; cursor:pointer; color:var(--mut)}
+  .ptab.on{background:var(--pri); border-color:var(--pri); color:#fff}
+
+  /* support */
+  .faq details{border-bottom:1px solid var(--line)}
+  .faq details:last-child{border-bottom:0}
+  .faq summary{padding:14px 16px; font-weight:800; cursor:pointer; font-size:15.5px; background:#fff; border-radius:12px}
+  .faq summary:hover{background:#f8fafc}
+  .faq .fa{padding:0 16px 14px; color:var(--mut); font-size:14.5px}
+  .gstep{display:flex; gap:12px}
+  .gnum{width:32px; height:32px; border-radius:50%; background:var(--pri); color:#fff; font-weight:800; display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:15px}
+
+  /* chat */
+  #chatBtn{position:fixed; right:18px; bottom:18px; width:58px; height:58px; border-radius:50%; background:var(--pri); color:#fff; font-size:26px; border:0; cursor:pointer; box-shadow:0 8px 22px rgba(79,70,229,.45); z-index:70}
+  #chatBox{position:fixed; right:18px; bottom:86px; width:min(340px, calc(100vw - 36px)); background:#fff; border:1px solid var(--line); border-radius:16px; box-shadow:0 16px 44px rgba(15,23,42,.22); z-index:70; display:none; flex-direction:column; overflow:hidden}
+  #chatBox.open{display:flex}
+  .chead{background:var(--pri); color:#fff; padding:12px 15px; font-weight:800; font-size:14px}
+  #chatMsgs{padding:12px; max-height:280px; overflow-y:auto; display:flex; flex-direction:column; gap:8px; background:#f8fafc}
+  .cmsg{max-width:85%; padding:9px 12px; border-radius:13px; font-size:14px; line-height:1.45}
+  .cmsg.bot{background:#fff; border:1px solid var(--line); align-self:flex-start}
+  .cmsg.me{background:var(--pri); color:#fff; align-self:flex-end}
+  .cinput{display:flex; border-top:1px solid var(--line)}
+  .cinput input{border:0; border-radius:0; flex:1}
+  .cinput button{border:0; background:var(--pri); color:#fff; padding:0 18px; font-weight:800; cursor:pointer}
+
+  #toast{position:fixed; left:50%; bottom:26px; transform:translateX(-50%) translateY(120px); background:var(--ink); color:#fff; padding:12px 22px; border-radius:12px; font-size:15px; z-index:99; transition:.3s; max-width:90vw; text-align:center; box-shadow:0 10px 30px rgba(0,0,0,.3)}
+  #toast.show{transform:translateX(-50%) translateY(0)}
+  .empty{text-align:center; color:var(--mut); padding:36px 10px}
+  .empty .eic{font-size:46px; margin-bottom:8px}
+  .stat .sv{font-size:26px; font-weight:800; color:var(--pri2)}
+  .stat .sl{font-size:12.5px; color:var(--mut); font-weight:800}
+  .foot{text-align:center; color:#94a3b8; font-size:12.5px; margin:30px 0 10px}
+  .kv{display:flex; justify-content:space-between; gap:10px; padding:8px 0; border-bottom:1px dashed var(--line); font-size:14.5px}
+  .kv:last-child{border-bottom:0}
+  @media(max-width:640px){ .hero{padding:30px 20px} .hero h1{font-size:25px} .otp{width:42px;height:50px} }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<button id="chatBtn" onclick="toggleChat()" title="Support">💬</button>
+<div id="chatBox">
+  <div class="chead">🛡️ <span id="chatTitle">KalaSetu Support</span></div>
+  <div id="chatMsgs"></div>
+  <div class="cinput"><input id="chatIn" type="text" onkeydown="if(event.key==='Enter')chatSend()"><button onclick="chatSend()">➤</button></div>
+</div>
+<div id="toast"></div>
+
+<script>
+'use strict';
+/* KalaSetu v4 — simple artisan-first UI · 9 languages · honest AI pricing (live comparables
+   + market index) · photo validation (rejects human photos) · full approval/alert/delivery flow */
+
+/* ============================ I18N ============================ */
+const I18N = {
+en:{
+ app_name:'KalaSetu', tagline:'Digital bridge for artisans',
+ home:'Home', alerts:'Alerts', support:'Help', logout:'Logout', reset:'Reset demo', bell:'Alerts',
+ choose_role:'Who are you?',
+ role_artisan:'Artisan', role_artisan_d:'Register · Sell with AI',
+ role_verifier:'Govt Verifier', role_verifier_d:'Approve artisans & products',
+ role_logistics:'Logistics', role_logistics_d:'Deliver & collect payment',
+ role_customer:'Buy', role_customer_d:'Authentic crafts · Pay on delivery',
+ hero_badge:'Govt-verified artisans · AI catalog · Pay on delivery',
+ hero_title:'Speak. Click. Sell across India.',
+ hero_sub:'One photo + your voice = a professional online shop. Free for artisans.',
+ hero_cta:'Get Started',
+ how1:'📲 Register with OTP', how2:'📸 Photo + voice note', how3:'🏛️ Govt verifies you', how4:'💰 Deliver & get paid',
+ demo_note:'Demo: accounts & orders are pre-filled · OTP shows on screen',
+ phone_label:'Mobile Number', phone_ph:'10-digit number', send_otp:'Send OTP',
+ otp_title:'OTP Verification', otp_sub:'Code sent to', demo_otp:'DEMO OTP',
+ verify:'Verify', resend:'Resend', wrong_otp:'Wrong OTP. Try again.',
+ otp_verified:'Mobile verified ✔', reg_title:'Artisan Registration',
+ full_name:'Your Name', craft_cat:'Your Craft', village:'Village & District',
+ pref_lang:'Your language', complete_reg:'Register', name_req:'Please enter your name.',
+ phone_req:'Please enter a valid 10-digit number.', already:'Have an account? Enter your number.',
+ back:'Back', next:'Next',
+ approve:'Approve', reject:'Reject', price:'Price', products:'Products', orders:'Orders', earnings:'Earnings',
+ st_pending:'Approval pending', st_approved:'Approved ✅', st_rejected:'Rejected',
+ st_placed:'Order placed', st_assigned:'With logistics', st_picked:'Picked up',
+ st_out:'Out for delivery', st_delivered:'Delivered', st_paid:'Payment received',
+ a_hello:'Namaste', add_product:'➕ New Product',
+ t_new:'Add Product', t_prods:'My Products', t_orders:'My Orders', t_money:'My Earnings',
+ v_ok_t:'You are Govt-Verified ✅', v_ok_d:'Your products get the trusted badge.',
+ v_wait_t:'Verification pending…', v_wait_d:'A govt officer will verify you soon. You can prepare products now.',
+ v_rej_t:'Verification rejected', v_rej_d:'Contact your cluster office.',
+ no_products:'No products yet.', w_step1:'Photo', w_step2:'Voice', w_step3:'Price',
+ w1_t:'📸 Product Photo', w1_sub:'Any table is fine. AI makes it studio-quality.',
+ choose_photo:'📁 Take / Choose Photo', enhance:'✨ Enhance with AI', enhancing:'Enhancing…',
+ before:'Original', after:'AI Enhanced', cmp_hint:'Drag to compare',
+ photo_ok:'✓ Product photo OK',
+ invalid_lowres:'❌ Photo too small/unclear. Please retake.', photo_tip:'💡 Tip: good light, plain background, product filling the frame — best results.', net_off:'Offline mode', off_banner:'No internet — your uploads are saved on this device and will sync automatically when the network returns.', pend:'items waiting to sync', sync_now:'⟳ Sync now', sync_a:'✅ Network back — ', sync_b:' item(s) synced', weak:'📶 Weak network — light mode: photos compressed to save data', last:'Last synced', sim:'Demo offline', sim_back:'Back online',
+ w2_t:'🎤 Speak about your product', w2_sub:'Press the mic and talk. No typing needed.',
+ desc_lang:'I speak', tap_mic:'Press & speak', stop:'Stop',
+ sim_voice:'▶ Use sample voice', transcript:'What we heard',
+ mic_hint:'🎤 Mic works in the published (https) app. Here, use the sample voice.',
+ gen_ai:'🤖 Create my listing', gen_note:'AI writes English + Hindi. You can edit.',
+ gen_title:'Title', gen_desc:'Description', gen_tags:'Tags', category:'Category',
+ need_desc:'Speak or type first.', need_photo:'Add a photo first.',
+ w3_t:'💰 Fair Price', w3_sub:'AI checks live market prices, then suggests.',
+ material_cost:'Material cost (₹)', hours:'Hours of work', calc:'Get Fair Price',
+ fair_calc:'Your fair floor (cost + effort)', market_band:'Market range',
+ live_comp:'Live from KalaSetu sellers', price_src:'Sources:', suggested:'Suggested price',
+ confidence:'confidence', final_price:'Your price (₹)', publish:'🚀 Send for Govt Approval',
+ published:'Sent! Govt officer alerted ✓',
+ p_rejected:'Rejected. Remark: ', my_orders_t:'Orders & Deliveries',
+ earned_from:'Delivered & paid', empty_orders:'No orders yet.',
+ earnings_note:'Payment collected at the door. 0% commission.',
+ v_dash:'Verification', v_artisans:'Artisans', v_products:'Products', v_hist:'Log',
+ v_no_artisan:'No artisans waiting.', v_no_prod:'No products waiting.', v_by:'by', craft:'Craft',
+ l_dash:'Logistics', l_tasks:'Deliveries', l_empty:'No tasks yet.',
+ pick:'📦 Picked Up', out:'🚚 Out for Delivery', deliver:'✅ Delivered — Take Payment',
+ pay_mode:'Customer pays by', upi:'UPI/Card', cash:'Cash',
+ collected:'{amt} collected ({mode}). All alerted ✓',
+ l_done:'Completed', l_collected:'Collected',
+ c_shop:'Authentic Handicrafts', c_sub:'Every product govt-approved. Pay at your door.',
+ by_artisan:'by', verified:'Govt-Verified', pod_t:'Pay on Delivery',
+ pod_d:'Pay by UPI or cash when it reaches your door.',
+ addr:'Delivery Address', addr_ph:'House / Street / City / PIN', addr_req:'Please enter address.',
+ place_order:'Order — Pay on Delivery', order_ok:'Order placed! Logistics alerted ✓',
+ my_orders:'My Orders', c_empty:'No orders yet.', alert_c:'Alerts', alert_sub:'You get In-App + SMS + WhatsApp alerts at every step.',
+ ch_all:'All', no_alerts:'No alerts yet.',
+ log_t:'📡 Message Log (demo)', log_sub:'Real app sends via SMS gateway + WhatsApp Business API.',
+ sup_t:'Help Center', faq_t:'Questions', guide_t:'How to sell (6 steps)',
+ contact_t:'Talk to us', contact_d:'Helpline 1800-XXX-XXXX · WhatsApp · chat below',
+ chat_hi:'Namaste! 🙏 Ask me about OTP, verification, price, delivery or payment.',
+ q1:'Why OTP?', a1:'It links your mobile to your profile. One number = one person. No fakes.',
+ q2:'Who verifies me?', a2:'A government officer checks you and each product. You get SMS + WhatsApp at every step.',
+ q3:'How is price decided?', a3:'AI checks live prices of similar products + your cost. You choose the final price.',
+ q4:'When do I get paid?', a4:'At delivery, logistics collects payment (UPI/cash). 0% commission.',
+ g1:'Register', g1d:'Your mobile + OTP', g2:'Get verified', g2d:'Govt officer approves you',
+ g3:'Photo', g3d:'AI makes it studio-quality', g4:'Speak', g4d:'Your voice becomes the listing',
+ g5:'Set fair price', g5d:'AI checks the market for you', g6:'Delivered & paid', g6d:'Money comes to you',
+ prod_new_order:'New order: "{p}".', prod_assigned:'Order "{p}" given to logistics.',
+ prod_picked:'Order "{p}" picked up.', prod_out:'"{p}" out for delivery. Keep {amt} ready.',
+ prod_paid:'Delivered! {amt} received for "{p}" (0% commission).',
+ cust_new_order:'Order confirmed: "{p}". Pay {amt} on delivery.',
+ ver_new_artisan:'New artisan: {n} ({v})', ver_new_prod:'New product "{p}" by {n}',
+ art_approved_sms:'KalaSetu: You are VERIFIED! You can now sell.',
+ art_rejected_sms:'KalaSetu: Verification needs more details. Contact cluster office.',
+ prod_approved_sms:'KalaSetu: "{p}" is APPROVED and LIVE.',
+ prod_rejected_sms:'KalaSetu: "{p}" not approved. See app for remarks.',
+ log_new_task:'New pickup: "{p}" from {n}.', other:'Other',
+ cp_open:'🛡️ Craft Passport', cp_t:'Craft Passport', cp_story:'Hear from the maker', cp_play:'▶ Play voice story', cp_stop:'■ Stop', cp_strip:'100% of this price goes to the artisan · 0% commission', cp_cert:'Authenticity Certificate', cp_vby:'Verified by', cp_mats:'Materials & Effort', cp_floor:'Fair-wage floor',
+ doc_t:'Identity & Documents', doc_id:'Aadhaar', doc_pmvi:'PM Vishwakarma ID', doc_reg:'Registered', d_back:'Back', d_apps:'Verification', d_products_by:'Products by this artisan', d_none:'No products yet.',
+ d_chk_photo:'Photo', d_chk_desc:'Description', d_chk_price:'Price', d_chk_enh:'AI-photo', d_pass:'✓', d_miss:'✗', d_warn:'⚠ not enhanced', d_remark:'Rejection remark (required)', d_rem_req:'Please enter a rejection remark.',
+ doc_no:'Aadhaar Number', doc_selfie:'Selfie Photo', doc_card:'Aadhaar Card', doc_priv:'🔒 Visible only to authorized verification officers', reg_aadhaar:'Aadhaar Number (12 digits)', reg_selfie:'Selfie (for verification)', reg_aadhaar_req:'Enter a valid 12-digit Aadhaar number.', reg_selfie_req:'Please add a selfie photo.', demo_use:'Use demo account', demo_data:'Demo data',
+ del_fee:'Delivery & handling', bill:'Bill', total_pay:'Total payable', delivery_note:'+ ₹30 delivery — supports the logistics partner', my_earn:'My delivery earnings', earn_note:'₹30 × deliveries · kept by logistics dept', paid_split:'{total} collected → {amt} to artisan + {fee} delivery', receipt_c:'Delivered! {total} received ({mode}) for "{p}".', art_credit:'"{p}" delivered — your {amt} is being transferred to your account (0% commission). Delivery fee goes to logistics.', return_req:'↩ Request Return', ret_reason:'Why are you returning?', r1:'Damaged in transit', r2:'Wrong item received', r3:'Quality issue', r4:'Changed my mind', rt_ok:'Return requested for "{p}". Logistics will pick it up.', ret_new_task:'↩ RETURN pickup: "{p}" from customer.', art_ret_note:'Return started for "{p}". The product will be picked up from the customer.', rt_picked_c:'Return picked up for "{p}". Refund of {amt} reaches your UPI within 48 hours.', rt_picked_a:'Return for "{p}" picked up — it will be delivered back to you.', rt_refunded_c:'Refund of {amt} for "{p}" paid to your UPI ✓', rt_refunded_a:'Returned product "{p}" is back with you.', rt_requested:'Return requested', rt_picked:'Return picked up', rt_refunded:'Refunded ✓', track_t:'Live Tracking', agent_by:'Delivery partner', pay_split_note:'Product amount → artisan account · ₹30 delivery → logistics dept', policy_t:'📜 Return & Refund Policy', read_pol:'📜 Return & Refund Policy', pol1_t:'7-day easy returns', pol1_d:'Request a return within 7 days of delivery — one tap in My Orders. No calls, no forms.', pol2_t:'Fast refund to UPI', pol2_d:'After the logistics pickup, your refund is paid to your UPI within 48 hours.', pol3_t:'Free returns for genuine issues', pol3_d:'Damaged, wrong or quality-issue items: 100% refund including the ₹30 delivery fee.', pol4_t:'Change-of-mind returns', pol4_d:'Changed your mind? Product amount is refunded; the ₹30 delivery fee is kept by the logistics partner.', pol5_t:'Artisan protection', pol5_d:'The artisan is paid only after successful delivery. On verified damage claims, KalaSetu mediates fairly for both sides.', pol6_t:'How to request', pol6_d:'My Orders → delivered order → Request Return → choose reason → hand the parcel to the logistics pickup agent.',
+},
+hi:{
+ app_name:'कलासेतु', tagline:'कारीगरों का डिजिटल पुल',
+ home:'होम', alerts:'अलर्ट', support:'मदद', logout:'लॉग आउट', reset:'डेमो रीसेट', bell:'अलर्ट',
+ choose_role:'आप कौन हैं?',
+ role_artisan:'कारीगर', role_artisan_d:'पंजीकरण · AI से बिक्री',
+ role_verifier:'सरकारी जांचकर्ता', role_verifier_d:'कारीगर व उत्पाद मंजूर',
+ role_logistics:'डिलीवरी', role_logistics_d:'पहुंचाएं व भुगतान लें',
+ role_customer:'खरीद', role_customer_d:'असली हस्तशिल्प · डिलीवरी पर भुगतान',
+ hero_badge:'सरकारी मान्य कारीगर · AI कैटलॉग · डिलीवरी पर भुगतान',
+ hero_title:'बोलिए। क्लिक कीजिए। पूरे भारत में बेचिए।',
+ hero_sub:'एक फोटो + आपकी आवाज़ = प्रोफेशनल ऑनलाइन दुकान। कारीगरों के लिए मुफ्त।',
+ hero_cta:'शुरू करें',
+ how1:'📲 OTP से पंजीकरण', how2:'📸 फोटो + आवाज़', how3:'🏛️ सरकारी मंजूरी', how4:'💰 डिलीवरी व कमाई',
+ demo_note:'डेमो: खाते व ऑर्डर पहले से तैयार · OTP स्क्रीन पर',
+ phone_label:'मोबाइल नंबर', phone_ph:'10 अंकों का नंबर', send_otp:'OTP भेजें',
+ otp_title:'OTP जांच', otp_sub:'कोड भेजा गया', demo_otp:'डेमो OTP',
+ verify:'जांचें', resend:'फिर भेजें', wrong_otp:'गलत OTP। फिर कोशिश करें।',
+ otp_verified:'मोबाइल जांचा ✔', reg_title:'कारीगर पंजीकरण',
+ full_name:'आपका नाम', craft_cat:'आपकी कला', village:'गांव व जिला',
+ pref_lang:'आपकी भाषा', complete_reg:'पंजीकरण करें', name_req:'कृपया नाम डालें।',
+ phone_req:'सही 10 अंकों का नंबर डालें।', already:'खाता है? नंबर डालें।',
+ back:'वापस', next:'आगे',
+ approve:'मंजूर', reject:'ना करें', price:'कीमत', products:'उत्पाद', orders:'ऑर्डर', earnings:'कमाई',
+ st_pending:'मंजूरी बाकी', st_approved:'मंजूर ✅', st_rejected:'ना मंजूर',
+ st_placed:'ऑर्डर हुआ', st_assigned:'डिलीवरी के पास', st_picked:'उठा लिया',
+ st_out:'पहुंच रहा है', st_delivered:'पहुंच गया', st_paid:'भुगतान मिला',
+ a_hello:'नमस्ते', add_product:'➕ नया उत्पाद',
+ t_new:'उत्पाद जोड़ें', t_prods:'मेरे उत्पाद', t_orders:'मेरे ऑर्डर', t_money:'मेरी कमाई',
+ v_ok_t:'आप सरकारी-मान्य हैं ✅', v_ok_d:'आपके उत्पादों पर भरोसे का बैज।',
+ v_wait_t:'जांच बाकी…', v_wait_d:'सरकारी अधिकारी जल्दी जांच करेंगे। अभी उत्पाद तैयार करें।',
+ v_rej_t:'जांच ना मंजूर', v_rej_d:'क्लस्टर कार्यालय से मिलें।',
+ no_products:'अभी कोई उत्पाद नहीं।', w_step1:'फोटो', w_step2:'आवाज़', w_step3:'कीमत',
+ w1_t:'📸 उत्पाद की फोटो', w1_sub:'कोई भी मेज़ चलेगी। AI स्टूडियो क्वालिटी बनाएगा।',
+ choose_photo:'📁 फोटो लें / चुनें', enhance:'✨ AI से सुधारें', enhancing:'सुधार हो रहा है…',
+ before:'असली', after:'AI सुधारी', cmp_hint:'तुलना के लिए खींचें',
+ photo_ok:'✓ फोटो ठीक है',
+ invalid_lowres:'❌ फोटो छोटी/धुंधली है। दोबारा लें।', photo_tip:'💡 सुझाव: अच्छी रोशनी में, सादे बैकग्राउंड पर, उत्पाद को फ्रेम में भरकर फोटो लें।', net_off:'ऑफ़लाइन मोड', off_banner:'इंटरनेट नहीं है — आपकी अपलोड इस डिवाइस पर सुरक्षित हैं और नेटवर्क आने पर अपने आप सिंक हो जाएंगी।', pend:'आइटम सिंक बाकी', sync_now:'⟳ अभी सिंक करें', sync_a:'✅ नेटवर्क वापस — ', sync_b:' आइटम सिंक हुए', weak:'📶 कमज़ोर नेटवर्क — लाइट मोड: फोटो कंप्रेस', last:'अंतिम सिंक', sim:'डेमो ऑफ़लाइन', sim_back:'ऑनलाइन करें',
+ w2_t:'🎤 अपने उत्पाद के बारे में बोलिए', w2_sub:'माइक दबाकर बोलिए। लिखने की ज़रूरत नहीं।',
+ desc_lang:'मैं बोलूंगा', tap_mic:'दबाकर बोलिए', stop:'रोकें',
+ sim_voice:'▶ नमूना आवाज़', transcript:'जो सुना',
+ mic_hint:'🎤 माइक प्रकाशित (https) ऐप में चलेगा। यहां नमूना आवाज़ चलाएं।',
+ gen_ai:'🤖 मेरी लिस्टिंग बनाओ', gen_note:'AI अंग्रेज़ी + हिंदी में लिखता है। बदल भी सकते हैं।',
+ gen_title:'शीर्षक', gen_desc:'विवरण', gen_tags:'टैग', category:'श्रेणी',
+ need_desc:'पहले बोलिए या लिखें।', need_photo:'पहले फोटो डालें।',
+ w3_t:'💰 उचित कीमत', w3_sub:'AI बाज़ार के असली भाव देखकर बताता है।',
+ material_cost:'सामग्री खर्च (₹)', hours:'काम के घंटे', calc:'उचित कीमत पाएं',
+ fair_calc:'आपका न्यायसंगत न्यूनतम (लागत + मेहनत)', market_band:'बाज़ार रेंज',
+ live_comp:'कलासेतु विक्रेताओं से लाइव', price_src:'स्रोत:', suggested:'सुझाई कीमत',
+ confidence:'भरोसा', final_price:'आपकी कीमत (₹)', publish:'🚀 सरकारी मंजूरी के लिए भेजें',
+ published:'भेज दिया! अधिकारी को अलर्ट ✓',
+ p_rejected:'ना मंजूर। टिप्पणी: ', my_orders_t:'ऑर्डर व डिलीवरी',
+ earned_from:'पहुंचा व भुगतान मिला', empty_orders:'अभी कोई ऑर्डर नहीं।',
+ earnings_note:'भुगतान दरवाज़े पर। 0% कमीशन।',
+ v_dash:'सत्यापन', v_artisans:'कारीगर', v_products:'उत्पाद', v_hist:'लॉग',
+ v_no_artisan:'कोई कारीगर इंतज़ार में नहीं।', v_no_prod:'कोई उत्पाद बाकी नहीं।', v_by:'—', craft:'कला',
+ l_dash:'डिलीवरी', l_tasks:'डिलीवरी', l_empty:'अभी कोई काम नहीं।',
+ pick:'📦 उठा लिया', out:'🚚 पहुंच रहे हैं', deliver:'✅ पहुंचा — भुगतान लें',
+ pay_mode:'ग्राहक देगा', upi:'UPI/कार्ड', cash:'नकद',
+ collected:'{amt} मिला ({mode})। सबको अलर्ट ✓',
+ l_done:'पूरे हुए', l_collected:'कुल वसूली',
+ c_shop:'असली हस्तशिल्प', c_sub:'हर उत्पाद सरकारी मंजूर। दरवाज़े पर भुगतान।',
+ by_artisan:'—', verified:'सरकारी-मान्य', pod_t:'डिलीवरी पर भुगतान',
+ pod_d:'उत्पाद पहुंचने पर UPI या नकद दें।',
+ addr:'डिलीवरी पता', addr_ph:'मकान / गली / शहर / पिन', addr_req:'कृपया पता डालें।',
+ place_order:'ऑर्डर — डिलीवरी पर भुगतान', order_ok:'ऑर्डर हो गया! डिलीवरी को अलर्ट ✓',
+ my_orders:'मेरे ऑर्डर', c_empty:'अभी कोई ऑर्डर नहीं।', alert_c:'अलर्ट', alert_sub:'हर कदम पर ऐप + SMS + WhatsApp अलर्ट।',
+ ch_all:'सभी', no_alerts:'कोई अलर्ट नहीं।',
+ log_t:'📡 संदेश लॉग (डेमो)', log_sub:'असली ऐप SMS गेटवे + WhatsApp API से भेजता है।',
+ sup_t:'सहायता', faq_t:'सवाल', guide_t:'बेचने का तरीका (6 कदम)',
+ contact_t:'बात करें', contact_d:'हेल्पलाइन 1800-XXX-XXXX · WhatsApp · नीचे चैट',
+ chat_hi:'नमस्ते! 🙏 OTP, मंजूरी, कीमत, डिलीवरी या भुगतान पूछें।',
+ q1:'OTP क्यों?', a1:'आपका नंबर प्रोफ़ाइल से जुड़ता है। एक नंबर = एक व्यक्ति। नकली नहीं।',
+ q2:'मुझे कौन मंजूर करता है?', a2:'सरकारी अधिकारी आपको व हर उत्पाद जांचता है। हर कदम पर SMS + WhatsApp।',
+ q3:'कीमत कैसे?', a3:'AI ऐसे उत्पादों के लाइव भाव + आपकी लागत देखता है। अंतिम कीमत आपकी।',
+ q4:'भुगतान कब?', a4:'डिलीवरी पर डिलीवरी विभाग UPI/नकद लेता है। 0% कमीशन।',
+ g1:'पंजीकरण', g1d:'मोबाइल + OTP', g2:'मंजूरी', g2d:'सरकारी अधिकारी मंजूर करेंगे',
+ g3:'फोटो', g3d:'AI स्टूडियो क्वालिटी बनाएगा', g4:'बोलिए', g4d:'आवाज़ सीधे लिस्टिंग बनेगी',
+ g5:'उचित कीमत', g5d:'AI बाज़ार देखकर बताएगा', g6:'पहुंचा व कमाए', g6d:'पैसा आपके पास',
+ prod_new_order:'नया ऑर्डर: "{p}"।', prod_assigned:'ऑर्डर "{p}" डिलीवरी को दिया।',
+ prod_picked:'ऑर्डर "{p}" उठा लिया।', prod_out:'"{p}" पहुंच रहा है। {amt} तैयार रखें।',
+ prod_paid:'पहुंच गया! "{p}" के {amt} मिले (0% कमीशन)।',
+ cust_new_order:'ऑर्डर पक्का: "{p}"। डिलीवरी पर {amt} दें।',
+ ver_new_artisan:'नया कारीगर: {n} ({v})', ver_new_prod:'नया उत्पाद "{p}" — {n}',
+ art_approved_sms:'कलासेतु: आप मान्य हो गए! अब बेच सकते हैं।',
+ art_rejected_sms:'कलासेतु: जांच के लिए और जानकारी चाहिए। क्लस्टर कार्यालय से मिलें।',
+ prod_approved_sms:'कलासेतु: "{p}" मंजूर, अब दुकान पर है।',
+ prod_rejected_sms:'कलासेतु: "{p}" मंजूर नहीं। ऐप में कारण देखें।',
+ log_new_task:'नया पिकअप: "{p}" — {n}।', other:'अन्य',
+ cp_open:'🛡️ क्राफ्ट पासपोर्ट', cp_t:'क्राफ्ट पासपोर्ट', cp_story:'कारीगर की आवाज़ सुनें', cp_play:'▶ आवाज़ चलाएं', cp_stop:'■ रोकें', cp_strip:'इस कीमत का 100% कारीगर को · 0% कमीशन', cp_cert:'असलियत प्रमाणपत्र', cp_vby:'सत्यापनकर्ता', cp_mats:'सामग्री व मेहनत', cp_floor:'उचित मज़दूरी फ्लोर',
+ doc_t:'पहचान व दस्तावेज़', doc_id:'आधार', doc_pmvi:'PM विश्वकर्मा आईडी', doc_reg:'पंजीकृत', d_back:'वापस', d_apps:'सत्यापन', d_products_by:'इस कारीगर के उत्पाद', d_none:'अभी कोई उत्पाद नहीं।',
+ d_chk_photo:'फोटो', d_chk_desc:'विवरण', d_chk_price:'कीमत', d_chk_enh:'AI-फोटो', d_pass:'✓', d_miss:'✗', d_warn:'⚠ सुधार बाकी', d_remark:'अस्वीकृति टिप्पणी (ज़रूरी)', d_rem_req:'कृपया टिप्पणी लिखें।',
+ del_fee:'डिलीवरी शुल्क', bill:'बिल', total_pay:'कुल देना है', delivery_note:'+ ₹30 डिलीवरी — डिलीवरी साथी को', my_earn:'मेरी डिलीवरी कमाई', earn_note:'₹30 × डिलीवरी · डिलीवरी विभाग की', paid_split:'{total} मिले → {amt} कारीगर को + {fee} डिलीवरी', receipt_c:'पहुंच गया! "{p}" के {total} मिले ({mode})।', art_credit:'"{p}" पहुंच गया — आपके {amt} आपके खाते में जा रहे हैं (0% कमीशन)। डिलीवरी शुल्क डिलीवरी विभाग को।', return_req:'↩ वापसी का अनुरोध', ret_reason:'क्यों लौटा रहे हैं?', r1:'डिलीवरी में टूटा', r2:'गलत सामान आया', r3:'क्वालिटी समस्या', r4:'मन बदल गया', rt_ok:'"{p}" की वापसी दर्ज। डिलीवरी उठाएगा।', ret_new_task:'↩ वापसी पिकअप: "{p}" — ग्राहक से।', art_ret_note:'"{p}" की वापसी शुरू। ग्राहक से उठाया जाएगा।', rt_picked_c:'"{p}" की वापसी उठा ली। {amt} रिफंड 48 घंटे में आपके UPI पर।', rt_picked_a:'"{p}" की वापसी उठा ली — यह आपके पास वापस आएगा।', rt_refunded_c:'"{p}" के {amt} रिफंड आपके UPI पर भेज दिए ✓', rt_refunded_a:'लौटा हुआ "{p}" आपके पास वापस।', rt_requested:'वापसी मांगी', rt_picked:'वापसी उठा ली', rt_refunded:'रिफंड ✓', track_t:'लाइव ट्रैकिंग', agent_by:'डिलीवरी साथी', pay_split_note:'उत्पाद राशि → कारीगर खाता · ₹30 डिलीवरी → डिलीवरी विभाग', policy_t:'📜 वापसी व रिफंड नीति', read_pol:'📜 वापसी व रिफंड नीति', pol1_t:'7 दिन की आसान वापसी', pol1_d:'डिलीवरी के 7 दिन के अंदर मेरे ऑर्डर से एक टैप में वापसी मांगें।', pol2_t:'तेज़ UPI रिफंड', pol2_d:'पिकअप के बाद 48 घंटे में पूरा रिफंड आपके UPI पर।', pol3_t:'असली समस्या पर मुफ्त वापसी', pol3_d:'टूटा, गलत या खराब सामान: ₹30 डिलीवरी सहित 100% रिफंड।', pol4_t:'मन बदलने पर', pol4_d:'उत्पाद के पैसे लौटेंगे; ₹30 डिलीवरी शुल्क डिलीवरी साथी का।', pol5_t:'कारीगर सुरक्षा', pol5_d:'सफल डिलीवरी के बाद ही कारीगर को भुगतान। जांची गई शिकायत पर निष्पक्ष मध्यस्थता।', pol6_t:'कैसे मांगें', pol6_d:'मेरे ऑर्डर → डिलीवर हुआ ऑर्डर → वापसी का अनुरोध → कारण चुनें → पार्सल एजेंट को दें।',
+ doc_no:'आधार नंबर', doc_selfie:'सेल्फी फोटो', doc_card:'आधार कार्ड', doc_priv:'🔒 केवल अधिकृत सत्यापन अधिकारी देख सकते हैं', reg_aadhaar:'आधार नंबर (12 अंक)', reg_selfie:'सेल्फी (सत्यापन के लिए)', reg_aadhaar_req:'सही 12 अंकों का आधार नंबर डालें।', reg_selfie_req:'कृपया सेल्फी फोटो जोड़ें।', demo_use:'डेमो खाता चलाएं', demo_data:'डेमो डेटा',
+},
+te:{
+ app_name:'కళాసేతు', tagline:'కళాకారుల డిజిటల్ వంతెన',
+ home:'హోమ్', alerts:'అలర్ట్‌లు', support:'సహాయం', logout:'లాగ్ అవుట్', reset:'డెమో రీసెట్', bell:'అలర్ట్',
+ choose_role:'మీరు ఎవరు?',
+ role_artisan:'కళాకారుడు', role_artisan_d:'నమోదు · AIతో అమ్మకం',
+ role_verifier:'ప్రభుత్వ ధృవీకరణ', role_verifier_d:'కళాకారులు & ఉత్పత్తుల ఆమోదం',
+ role_logistics:'డెలివరీ', role_logistics_d:'పంపిణీ & చెల్లింపు',
+ role_customer:'కొనుగోలు', role_customer_d:'అసలైన చేతిపనుల · డెలివరీపై చెల్లింపు',
+ hero_badge:'ప్రభుత్వ ధృవీకృత కళాకారులు · AI కేటలాగ్ · డెలివరీపై చెల్లింపు',
+ hero_title:'మాట్లాడండి. క్లిక్ చేయండి. దేశమంతటా అమ్మండి.',
+ hero_sub:'ఒక ఫోటో + మీ స్వరం = ప్రొఫెషనల్ ఆన్‌లైన్ షాప్. కళాకారులకు ఉచితం.',
+ hero_cta:'ప్రారంభించండి',
+ how1:'📲 OTP నమోదు', how2:'📸 ఫోటో + వాయిస్', how3:'🏛️ ప్రభుత్వ ఆమోదం', how4:'💰 డెలివరీ & ఆదాయం',
+ demo_note:'డెమో: ఖాతాలు & ఆర్డర్లు సిద్ధం · OTP స్క్రీన్‌పై',
+ phone_label:'మొబైల్ నంబర్', phone_ph:'10 అంకెల నంబర్', send_otp:'OTP పంపండి',
+ otp_title:'OTP ధృవీకరణ', otp_sub:'కోడ్ పంపబడింది', demo_otp:'డెమో OTP',
+ verify:'ధృవీకరించు', resend:'మళ్లీ', wrong_otp:'తప్పు OTP. మళ్లీ ట్రై చేయండి.',
+ otp_verified:'నంబర్ ధృవీకరణ ✔', reg_title:'కళాకారుడి నమోదు',
+ full_name:'మీ పేరు', craft_cat:'మీ కళ', village:'గ్రామం & జిల్లా',
+ pref_lang:'మీ భాష', complete_reg:'నమోదు చేయండి', name_req:'పేరు నమోదు చేయండి.',
+ phone_req:'సరైన 10 అంకెల నంబర్ నమోదు చేయండి.', already:'ఖాతా ఉందా? నంబర్ నమోదు చేయండి.',
+ back:'వెనుకకు', next:'ముందు',
+ approve:'ఆమోదించు', reject:'తిరస్కరించు', price:'ధర', products:'ఉత్పత్తులు', orders:'ఆర్డర్లు', earnings:'ఆదాయం',
+ st_pending:'ఆమోదం మిగిలింది', st_approved:'ఆమోదించారు ✅', st_rejected:'తిరస్కరించారు',
+ st_placed:'ఆర్డర్ అయింది', st_assigned:'డెలివరీ వద్ద', st_picked:'తీసుకున్నారు',
+ st_out:'వస్తోంది', st_delivered:'చేరింది', st_paid:'చెల్లింపు వచ్చింది',
+ a_hello:'నమస్తే', add_product:'➕ కొత్త ఉత్పత్తి',
+ t_new:'ఉత్పత్తి జోడించు', t_prods:'నా ఉత్పత్తులు', t_orders:'నా ఆర్డర్లు', t_money:'నా ఆదాయం',
+ v_ok_t:'మీరు ప్రభుత్వ-ధృవీకృత ✅', v_ok_d:'మీ ఉత్పత్తులకు నమ్మక బ్యాడ్జ్.',
+ v_wait_t:'ధృవీకరణ మిగిలింది…', v_wait_d:'ప్రభుత్వ అధికారి త్వరలో ధృవీకరిస్తారు. ఇప్పుడే ఉత్పత్తులు సిద్ధం చేయండి.',
+ v_rej_t:'ధృవీకరణ తిరస్కరణ', v_rej_d:'క్లస్టర్ కార్యాలయం సంప్రదించండి.',
+ no_products:'ఇంకా ఉత్పత్తులు లేవు.', w_step1:'ఫోటో', w_step2:'వాయిస్', w_step3:'ధర',
+ w1_t:'📸 ఉత్పత్తి ఫోటో', w1_sub:'ఏ టేబులైనా చాలు. AI స్టూడియో క్వాలిటీ చేస్తుంది.',
+ choose_photo:'📁 ఫోటో తీయండి / ఎంచుకోండి', enhance:'✨ AI మెరుగుపరచు', enhancing:'మెరుగుపరుస్తోంది…',
+ before:'అసలు', after:'AI', cmp_hint:'పోల్చడానికి లాగండి',
+ photo_ok:'✓ ఫోటో సరిగ్గా ఉంది',
+ invalid_lowres:'❌ ఫోటో చాలా చిన్నది/మసకం. మళ్లీ తీయండి.', photo_tip:'💡 చిట్కా: మంచి వెలుతురులో, సాధారణ నేపథ్యంలో, ఉత్పత్తి ఫ్రేమ్‌ను నింపేలా ఫోటో తీయండి.', net_off:'ఆఫ్‌లైన్ మోడ్', off_banner:'ఇంటర్నెట్ లేదు — మీ అప్‌లోడ్‌లు ఈ పరికరంలో భద్రంగా ఉన్నాయి, నెట్‌వర్క్ వచ్చాక స్వయంచాలకంగా సింక్ అవుతాయి.', pend:'అంశాలు సింక్ బాకీ', sync_now:'⟳ ఇప్పుడే సింక్', sync_a:'✅ నెట్‌వర్క్ తిరిగి వచ్చింది — ', sync_b:' అంశాలు సింక్ అయ్యాయి', weak:'📶 బలహీన నెట్‌వర్క్ — లైట్ మోడ్: ఫోటోలు కుదించబడ్డాయి', last:'చివరి సింక్', sim:'డెమో ఆఫ్‌లైన్', sim_back:'ఆన్‌లైన్',
+ w2_t:'🎤 ఉత్పత్తి గురించి మాట్లాడండి', w2_sub:'మైక్ నొక్కి మాట్లాడండి. రాయడం అక్కర్లేదు.',
+ desc_lang:'నేను మాట్లాడేది', tap_mic:'నొక్కి మాట్లాడండి', stop:'ఆపండి',
+ sim_voice:'▶ సాంపిల్ వాయిస్', transcript:'విన్నది',
+ mic_hint:'🎤 మైక్ ప్రచురిత (https) యాప్‌లో పనిచేస్తుంది. ఇక్కడ సాంపిల్ వాయిస్ వాడండి.',
+ gen_ai:'🤖 నా లిస్టింగ్ చేయి', gen_note:'AI ఇంగ్లీష్ + హిందీలో రాస్తుంది. మార్చవచ్చు.',
+ gen_title:'టైటిల్', gen_desc:'వివరణ', gen_tags:'ట్యాగ్‌లు', category:'వర్గం',
+ need_desc:'ముందుగా మాట్లాడండి లేదా రాయండి.', need_photo:'ముందుగా ఫోటో పెట్టండి.',
+ w3_t:'💰 న్యాయమైన ధర', w3_sub:'AI మార్కెట్ అసలి ధరలు చూసి చెబుతుంది.',
+ material_cost:'మెటీరియల్ ఖర్చు (₹)', hours:'పని గంటలు', calc:'న్యాయ ధర పొందండి',
+ fair_calc:'మీ న్యాయ కనిష్టం (ఖర్చు + కృషి)', market_band:'మార్కెట్ రేంజ్',
+ live_comp:'కళాసేతు అమ్మకందారుల నుండి లైవ్', price_src:'మూలాలు:', suggested:'సూచించిన ధర',
+ confidence:'నమ్మకం', final_price:'మీ ధర (₹)', publish:'🚀 ప్రభుత్వ ఆమోదానికి పంపండి',
+ published:'పంపాం! అధికారికి అలర్ట్ ✓',
+ p_rejected:'తిరస్కరణ. వ్యాఖ్య: ', my_orders_t:'ఆర్డర్లు & డెలివరీలు',
+ earned_from:'చేరింది & చెల్లింపు', empty_orders:'ఇంకా ఆర్డర్లు లేవు.',
+ earnings_note:'భుగతానం ఇంటి వద్ద. 0% కమీషన్.',
+ v_dash:'ధృవీకరణ', v_artisans:'కళాకారులు', v_products:'ఉత్పత్తులు', v_hist:'లాగ్',
+ v_no_artisan:'ఎవరూ వేచి లేరు.', v_no_prod:'ఉత్పత్తులు లేవు.', v_by:'—', craft:'కళ',
+ l_dash:'డెలివరీ', l_tasks:'డెలివరీలు', l_empty:'ఇంకా పనులు లేవు.',
+ pick:'📦 తీసుకున్నా', out:'🚚 వస్తున్నా', deliver:'✅ చేర్చా — చెల్లింపు తీర్చుకో',
+ pay_mode:'కస్టమర్ ఇవ్వదు', upi:'UPI/కార్డ్', cash:'నగదు',
+ collected:'{amt} వచ్చింది ({mode}). అందరికీ అలర్ట్ ✓',
+ l_done:'పూర్తయినవి', l_collected:'మొత్తం వసూళ్లు',
+ c_shop:'అసలైన చేతిపనుల వస్తువులు', c_sub:'ప్రతి ఉత్పత్తి ప్రభుత్వ ఆమోదం. మీ తలుపు వద్ద చెల్లింపు.',
+ by_artisan:'—', verified:'ప్రభుత్వ-ధృవీకృత', pod_t:'డెలివరీపై చెల్లింపు',
+ pod_d:'చేరినప్పుడు UPI లేదా నగదు చెల్లించండి.',
+ addr:'డెలివరీ చిరునామా', addr_ph:'ఇల్లు / వీధి / నగరం / పిన్', addr_req:'చిరునామా నమోదు చేయండి.',
+ place_order:'ఆర్డర్ — డెలివరీపై చెల్లింపు', order_ok:'ఆర్డర్ అయింది! డెలివరీకి అలర్ట్ ✓',
+ my_orders:'నా ఆర్డర్లు', c_empty:'ఇంకా ఆర్డర్లు లేవు.', alert_c:'అలర్ట్‌లు', alert_sub:'ప్రతి దశకు యాప్ + SMS + WhatsApp అలర్ట్.',
+ ch_all:'అన్నీ', no_alerts:'అలర్ట్‌లు లేవు.',
+ log_t:'📡 మెసేజ్ లాగ్ (డెమో)', log_sub:'అసలి యాప్ SMS గేట్‌వే + WhatsApp API ద్వారా పంపుతుంది.',
+ sup_t:'సహాయ కేంద్రం', faq_t:'ప్రశ్నలు', guide_t:'అమ్మడం ఎలా (6 దశలు)',
+ contact_t:'మాతో మాట్లాడండి', contact_d:'హెల్ప్‌లైన్ 1800-XXX-XXXX · WhatsApp · క్రింద చాట్',
+ chat_hi:'నమస్తే! 🙏 OTP, ధృవీకరణ, ధర, డెలివరీ, చెల్లింపు అడగండి.',
+ q1:'OTP ఎందుకు?', a1:'మీ నంబర్ ప్రొఫైల్‌కు లింక్. ఒక నంబర్ = ఒక వ్యక్తి. నకిలీలు ఉండవు.',
+ q2:'ఎవరు ధృవీకరిస్తారు?', a2:'ప్రభుత్వ అధికారి మిమ్మల్ని, ప్రతి ఉత్పత్తిని చూస్తారు. ప్రతి దశకు SMS + WhatsApp.',
+ q3:'ధర ఎలా?', a3:'AI ఇలాంటి ఉత్పత్తుల లైవ్ ధరలు + మీ ఖర్చు చూస్తుంది. తుది ధర మీదే.',
+ q4:'చెల్లింపు ఎప్పుడు?', a4:'డెలివరీ సమయంలో లోజిస్టిక్స్ UPI/నగదు తీసుకుంటుంది. 0% కమీషన్.',
+ g1:'నమోదు', g1d:'మొబైల్ + OTP', g2:'ధృవీకరణ', g2d:'ప్రభుత్వ అధికారి ఆమోదం',
+ g3:'ఫోటో', g3d:'AI స్టూడియో క్వాలిటీ', g4:'మాట్లాడండి', g4d:'స్వరం లిస్టింగ్ అవుతుంది',
+ g5:'న్యాయ ధర', g5d:'AI మార్కెట్ చూస్తుంది', g6:'చేరింది & ఆదాయం', g6d:'డబ్బు మీకే',
+ prod_new_order:'కొత్త ఆర్డర్: "{p}".', prod_assigned:'ఆర్డర్ "{p}" డెలివరీకి ఇచ్చారు.',
+ prod_picked:'ఆర్డర్ "{p}" తీసుకున్నారు.', prod_out:'"{p}" వస్తోంది. {amt} సిద్ధంగా ఉంచండి.',
+ prod_paid:'చేరింది! "{p}" కు {amt} (0% కమీషన్).',
+ cust_new_order:'ఆర్డర్ ఖరారు: "{p}". డెలివరీపై {amt} చెల్లించండి.',
+ ver_new_artisan:'కొత్త కళాకారుడు: {n} ({v})', ver_new_prod:'కొత్త ఉత్పత్తి "{p}" — {n}',
+ art_approved_sms:'కళాసేతు: మీరు ధృవీకృతులు! ఇప్పుడు అమ్మవచ్చు.',
+ art_rejected_sms:'కళాసేతు: ధృవీకరణకు మరిన్ని వివరాలు. క్లస్టర్ కార్యాలయం సంప్రదించండి.',
+ prod_approved_sms:'కళాసేతు: "{p}" ఆమోదం, ఇప్పుడు షాప్‌లో.',
+ prod_rejected_sms:'కళాసేతు: "{p}" ఆమోదం కాలేదు. యాప్‌లో కారణం చూడండి.',
+ log_new_task:'కొత్త పికప్: "{p}" — {n}.', other:'ఇతర',
+ cp_open:'🛡️ క్రాఫ్ట్ పాస్‌పోర్ట్', cp_t:'క్రాఫ్ట్ పాస్‌పోర్ట్', cp_story:'కళాకారుడి స్వరం వినండి', cp_play:'▶ వినండి', cp_stop:'■ ఆపండి', cp_strip:'ఈ ధరలో 100% కళాకారుడికే · 0% కమీషన్', cp_cert:'అసలితన ధృవీకరణ', cp_vby:'ధృవీకరించినవారు', cp_mats:'మెటీరియల్ & కృషి', cp_floor:'న్యాయ కనిష్టం',
+ doc_t:'గుర్తింపు & పత్రాలు', doc_id:'ఆధార్', doc_pmvi:'PM విశ్వకర్మ ఐడీ', doc_reg:'నమోదు', d_back:'వెనుకకు', d_apps:'ధృవీకరణ', d_products_by:'ఈ కళాకారుడి ఉత్పత్తులు', d_none:'ఇంకా లేవు.',
+ d_chk_photo:'ఫోటో', d_chk_desc:'వివరణ', d_chk_price:'ధర', d_chk_enh:'AI-ఫోటో', d_pass:'✓', d_miss:'✗', d_warn:'⚠ మెరుగు బాకీ', d_remark:'తిరస్కరణ వ్యాఖ్య (తప్పనిసరి)', d_rem_req:'దయచేసి వ్యాఖ్య రాయండి.',
+ del_fee:'డెలివరీ ఛార్జీ', bill:'బిల్లు', total_pay:'మొత్తం చెల్లించు', delivery_note:'+ ₹30 డెలివరీ — డెలివరీ సహచరులకు', my_earn:'నా డెలివరీ ఆదాయం', earn_note:'₹30 × డెలివరీలు · డెలివరీ శాఖకు', paid_split:'{total} వచ్చాయి → {amt} కళాకారుడికి + {fee} డెలివరీ', receipt_c:'చేరింది! "{p}" కు {total} అందుకున్నాం ({mode})।', art_credit:'"{p}" చేరింది — మీ {amt} మీ ఖాతాకు పంపుతున్నాం (0% కమీషన్). డెలివరీ ఛార్జీ డెలివరీ శాఖకు.', return_req:'↩ రిటర్న్ అభ్యర్థన', ret_reason:'ఎందుకు తిరిగి ఇస్తున్నారు?', r1:'రవాణాలో పగిలింది', r2:'తప్పుగా వచ్చింది', r3:'క్వాలిటీ సమస్య', r4:'మనసు మారింది', rt_ok:'"{p}" రిటర్న్ నమోదు. డెలివరీ తీసుకుంటుంది.', ret_new_task:'↩ రిటర్న్ పికప్: "{p}" — కస్టమర్ నుండి.', art_ret_note:'"{p}" రిటర్న్ ప్రారంభం. కస్టమర్ నుండి తీసుకుంటారు.', rt_picked_c:'"{p}" రిటర్న్ తీసుకున్నాం. {amt} రీఫండ్ 48 గంటల్లో మీ UPI కి.', rt_picked_a:'"{p}" రిటర్న్ తీసుకున్నారు — అది మీ వద్దకు తిరిగి వస్తుంది.', rt_refunded_c:'"{p}" కు {amt} రీఫండ్ మీ UPI కి పంపాం ✓', rt_refunded_a:'తిరిగి వచ్చిన "{p}" మీ వద్ద ఉంది.', rt_requested:'రిటర్న్ అభ్యర్థించారు', rt_picked:'రిటర్న్ తీసుకున్నారు', rt_refunded:'రీఫండ్ ✓', track_t:'లైవ్ ట్రాకింగ్', agent_by:'డెలివరీ భాగస్వామి', pay_split_note:'ఉత్పత్తి మొత్తం → కళాకారుడి ఖాతా · ₹30 డెలివరీ → డెలివరీ శాఖ', policy_t:'📜 రిటర్న్ & రీఫండ్ విధానం', read_pol:'📜 రిటర్న్ & రీఫండ్ విధానం', pol1_t:'7 రోజుల సులభ రిటర్న్', pol1_d:'డెలివరీ తర్వాత 7 రోజుల్లో నా ఆర్డర్ల నుండి ఒక ట్యాప్‌లో రిటర్న్.', pol2_t:'వేగవంతమైన UPI రీఫండ్', pol2_d:'పికప్ తర్వాత 48 గంటల్లో పూర్తి రీఫండ్ మీ UPI కి.', pol3_t:'నిజమైన సమస్యలకు ఉచిత రిటర్న్', pol3_d:'పగిలిన/తప్పు/నాణ్యత సమస్య: ₹30 డెలివరీతో సహా 100% రీఫండ్.', pol4_t:'మనసు మారితే', pol4_d:'ఉత్పత్తి డబ్బులు వస్తాయి; ₹30 డెలివరీ ఛార్జీ డెలివరీ భాగస్వామిదే.', pol5_t:'కళాకారుడి రక్షణ', pol5_d:'విజయవంతమైన డెలివరీ తర్వాతే కళాకారుడికి చెల్లింపు. ధృవీకరించిన నష్ట విజ్ఞప్తిపై న్యాయమైన మధ్యవర్తిత్వం.', pol6_t:'ఎలా అభ్యర్థించాలి', pol6_d:'నా ఆర్డర్లు → డెలివర్ అయిన ఆర్డర్ → రిటర్న్ అభ్యర్థన → కారణం ఎంచుకోండి → ఏజెంట్‌కు ఇవ్వండి.',
+ doc_no:'ఆధార్ నంబర్', doc_selfie:'సెల్ఫీ ఫోటో', doc_card:'ఆధార్ కార్డ్', doc_priv:'🔒 అధికార ధృవీకరణ అధికారులకు మాత్రమే', reg_aadhaar:'ఆధార్ నంబర్ (12 అంకెలు)', reg_selfie:'సెల్ఫీ (ధృవీకరణకు)', reg_aadhaar_req:'సరైన 12 అంకెల ఆధార్ నంబర్ నమోదు చేయండి.', reg_selfie_req:'దయచేసి సెల్ఫీ ఫోటో జోడించండి.', demo_use:'డెమో ఖాతా వాడండి', demo_data:'డెమో డేటా',
+},
+ta:{
+ app_name:'கலைசேது', tagline:'கைவினைஞர்களுக்கான டிஜிட்டல் பாலம்',
+ home:'முகப்பு', alerts:'அலர்ட்', support:'உதவி', logout:'வெளியேறு', reset:'டெமோ ரீசெட்', bell:'அலர்ட்',
+ choose_role:'நீங்கள் யார்?',
+ role_artisan:'கைவினைஞர்', role_artisan_d:'பதிவு · AI உதவியுடன் விற்பனை',
+ role_verifier:'அரசு சரிபார்ப்பு', role_verifier_d:'கைவினைஞர் & பொருள் அனுமதி',
+ role_logistics:'டெலிவரி', role_logistics_d:'வழங்கி, பணம் பெறுங்கள்',
+ role_customer:'வாங்க', role_customer_d:'அசல் கைவினை · டெலிவரியில் பணம்',
+ hero_badge:'அரசு சரிபார்த்த கைவினைஞர் · AI கேட்டலாக் · டெலிவரியில் பணம்',
+ hero_title:'பேசுங்கள். படம் எடுங்கள். இந்தியா முழுவதும் விற்கவும்.',
+ hero_sub:'ஒரு படம் + உங்கள் குரல் = தொழில்முறை ஆன்லைன் கடை. இலவசம்.',
+ hero_cta:'தொடங்கு',
+ how1:'📲 OTP பதிவு', how2:'📸 படம் + குரல்', how3:'🏛️ அரசு அனுமதி', how4:'💰 டெலிவரி & வருமானம்',
+ demo_note:'டெமோ: கணக்குகள் தயார் · OTP திரையில்',
+ phone_label:'கைபேசி எண்', phone_ph:'10 எண்', send_otp:'OTP அனுப்பு',
+ otp_title:'OTP சரிபார்ப்பு', otp_sub:'குறியீடு அனுப்பப்பட்டது', demo_otp:'டெமோ OTP',
+ verify:'சரிபார்', resend:'மீண்டும்', wrong_otp:'தவறான OTP. மீண்டும் முயற்சி.',
+ otp_verified:'எண் சரிபார்க்கப்பட்டது ✔', reg_title:'கைவினைஞர் பதிவு',
+ full_name:'உங்கள் பெயர்', craft_cat:'உங்கள் கைவினை', village:'கிராமம் & மாவட்டம்',
+ pref_lang:'உங்கள் மொழி', complete_reg:'பதிவு செய்', name_req:'பெயர் உள்ளிடுங்கள்.',
+ phone_req:'சரியான 10 எண் உள்ளிடுங்கள்.', already:'கணக்கு உள்ளதா? எண் உள்ளிடுங்கள்.',
+ back:'பின்', next:'அடுத்து',
+ approve:'அனுமதி', reject:'மறு', price:'விலை', products:'பொருட்கள்', orders:'ஆர்டர்', earnings:'வருமானம்',
+ st_pending:'அனுமதி நிலுவை', st_approved:'அனுமதி ✅', st_rejected:'மறுக்கப்பட்டது',
+ st_placed:'ஆர்டர் ஆனது', st_assigned:'டெலிவரியிடம்', st_picked:'எடுத்தார்கள்',
+ st_out:'வருகிறது', st_delivered:'சேர்ந்தது', st_paid:'பணம் வந்தது',
+ a_hello:'வணக்கம்', add_product:'➕ புதிய பொருள்',
+ t_new:'பொருள் சேர்', t_prods:'என் பொருட்கள்', t_orders:'என் ஆர்டர்', t_money:'என் வருமானம்',
+ v_ok_t:'நீங்கள் அரசு-சரிபார்த்தவர் ✅', v_ok_d:'உங்கள் பொருட்களுக்கு நம்பிக்கை பேட்ஜ்.',
+ v_wait_t:'சரிபார்ப்பு நிலுவை…', v_wait_d:'அரசு அதிகாரி விரைவில் சரிபார்ப்பார். இப்போதே பொருட்கள் தயார் செய்யலாம்.',
+ v_rej_t:'சரிபார்ப்பு மறுக்கப்பட்டது', v_rej_d:'கிளஸ்டர் அலுவலகத்தை தொடர்பு கொள்ளுங்கள்.',
+ no_products:'இன்னும் பொருட்கள் இல்லை.', w_step1:'படம்', w_step2:'குரல்', w_step3:'விலை',
+ w1_t:'📸 பொருள் படம்', w1_sub:'எந்த மேஜையும் போதும். AI ஸ்டூடியோ தரம் செய்யும்.',
+ choose_photo:'📁 படம் எடு / தேர்வு', enhance:'✨ AI மேம்படுத்து', enhancing:'மேம்படுத்துகிறது…',
+ before:'அசல்', after:'AI', cmp_hint:'ஒப்பிட இழுக்கவும்',
+ photo_ok:'✓ படம் சரி',
+ invalid_lowres:'❌ படம் மிகச் சிறியது/தெளிவில்லை. மீண்டும் எடுங்கள்.', photo_tip:'💡 குறிப்பு: நல்ல ஒளியில், எளிய பின்னணியில், பொருள் பிரேமை நிரப்ப படம் எடுங்கள்.', net_off:'ஆஃப்லைன் முறை', off_banner:'இணையம் இல்லை — உங்கள் பதிவேற்றங்கள் இந்தச் சாதனத்தில் பாதுகாப்பாக உள்ளன, நெட்வொர்க் வந்ததும் தானாக சிங்க் ஆகும்.', pend:'பொருட்கள் சிங்க் மீதம்', sync_now:'⟳ இப்போது சிங்க்', sync_a:'✅ நெட்வொர்க் திரும்பியது — ', sync_b:' பொருட்கள் சிங்க் ஆனது', weak:'📶 பலவீன நெட்வொர்க் — லைட் மோட்: படங்கள் சுருக்கம்', last:'கடைசி சிங்க்', sim:'டெமோ ஆஃப்லைன்', sim_back:'ஆன்லைன்',
+ w2_t:'🎤 பொருள் பற்றி பேசுங்கள்', w2_sub:'மைக் அழுத்தி பேசுங்கள். எழுத வேண்டாம்.',
+ desc_lang:'நான் பேசுவது', tap_mic:'அழுத்தி பேசுங்கள்', stop:'நிறுத்து',
+ sim_voice:'▶ மாதிரி குரல்', transcript:'கேட்டது',
+ mic_hint:'🎤 மைக் வெளியிடப்பட்ட (https) ஆப்பில் வேலை செய்யும். இங்கே மாதிரி குரல் பயன்படுத்துங்கள்.',
+ gen_ai:'🤖 என் லிஸ்டிங் உருவாக்கு', gen_note:'AI ஆங்கிலம் + இந்தியில் எழுதும். திருத்தலாம்.',
+ gen_title:'தலைப்பு', gen_desc:'விளக்கம்', gen_tags:'டேக்', category:'வகை',
+ need_desc:'முதலில் பேசுங்கள்.', need_photo:'முதலில் படம்.',
+ w3_t:'💰 நியாயமான விலை', w3_sub:'AI சந்தை உண்மை விலைகளை பார்த்து சொல்லும்.',
+ material_cost:'மூலப்பொருள் செலவு (₹)', hours:'வேலை நேரம்', calc:'நியாய விலை பெறுங்கள்',
+ fair_calc:'உங்கள் நியாய அடிப்படை (செலவு + உழைப்பு)', market_band:'சந்தை வரம்பு',
+ live_comp:'கலைசேது விற்பனையாளர்களிடமிருந்து லைவ்', price_src:'ஆதாரம்:', suggested:'பரிந்துரை விலை',
+ confidence:'நம்பிக்கை', final_price:'உங்கள் விலை (₹)', publish:'🚀 அரசு அனுமதிக்கு அனுப்பு',
+ published:'அனுப்பிவிட்டோம்! அதிகாரிக்கு அலர்ட் ✓',
+ p_rejected:'மறுக்கப்பட்டது. கருத்து: ', my_orders_t:'ஆர்டர் & டெலிவரி',
+ earned_from:'சேர்ந்தது & பணம்', empty_orders:'இன்னும் ஆர்டர் இல்லை.',
+ earnings_note:'பணம் வீட்டில். 0% கமிஷன்.',
+ v_dash:'சரிபார்ப்பு', v_artisans:'கைவினைஞர்', v_products:'பொருட்கள்', v_hist:'பதிவு',
+ v_no_artisan:'யாரும் காத்திருக்கவில்லை.', v_no_prod:'பொருட்கள் இல்லை.', v_by:'—', craft:'கைவினை',
+ c_shop:'அசல் கைவினைப் பொருட்கள்', c_sub:'ஒவ்வொரு பொருளும் அரசு அனுமதி. வீட்டில் பணம்.',
+ by_artisan:'—', verified:'அரசு-சரிபார்த்த', pod_t:'டெலிவரியில் பணம்',
+ addr:'முகவரி', place_order:'ஆர்டர் — டெலிவரியில் பணம்', my_orders:'என் ஆர்டர்',
+ alert_c:'அலர்ட்', ch_all:'அனைத்தும்', no_alerts:'அலர்ட் இல்லை.',
+},
+kn:{
+ app_name:'ಕಲಾಸೇತು', tagline:'ಕುಶಲಕರ್ಮಿಗಳ ಡಿಜಿಟಲ್ ಸೇತುವೆ',
+ home:'ಮುಖಪುಟ', alerts:'ಅಲರ್ಟ್', support:'ಸಹಾಯ', logout:'ಲಾಗ್ ಔಟ್', reset:'ಡೆಮೊ ರೀಸೆಟ್', bell:'ಅಲರ್ಟ್',
+ choose_role:'ನೀವು ಯಾರು?',
+ role_artisan:'ಕುಶಲಕರ್ಮಿ', role_artisan_d:'ನೋಂದಣಿ · AI ಮಾರಾಟ',
+ role_verifier:'ಸರ್ಕಾರಿ ಪರಿಶೀಲನೆ', role_verifier_d:'ಕುಶಲಕರ್ಮಿ & ಉತ್ಪನ್ನ ಅನುಮೋದನೆ',
+ role_logistics:'ಡೆಲಿವರಿ', role_logistics_d:'ವಿತರಣೆ & ಪಾವತಿ',
+ role_customer:'ಖರೀದಿ', role_customer_d:'ಅಧಿಕೃತ ಕೈಕೆಲಸ · ಡೆಲಿವರಿಯಲ್ಲಿ ಪಾವತಿ',
+ hero_badge:'ಸರ್ಕಾರಿ ಪರಿಶೀಲಿತ ಕುಶಲಕರ್ಮಿ · AI ಕ್ಯಾಟಲಾಗ್ · ಡೆಲಿವರಿಯಲ್ಲಿ ಪಾವತಿ',
+ hero_title:'ಮಾತನಾಡಿ. ಫೋಟೋ ತೆಗೆಯಿರಿ. ಇಡೀ ಭಾರತದಲ್ಲಿ ಮಾರಾಟ.',
+ hero_sub:'ಒಂದು ಫೋಟೋ + ನಿಮ್ಮ ಧ್ವನಿ = ವೃತ್ತಿಪರ ಆನ್‌ಲೈನ್ ಅಂಗಡಿ. ಉಚಿತ.',
+ hero_cta:'ಪ್ರಾರಂಭಿಸಿ',
+ how1:'📲 OTP ನೋಂದಣಿ', how2:'📸 ಫೋಟೋ + ಧ್ವನಿ', how3:'🏛️ ಸರ್ಕಾರಿ ಅನುಮತಿ', how4:'💰 ಡೆಲಿವರಿ & ಆದಾಯ',
+ demo_note:'ಡೆಮೊ: ಖಾತೆಗಳು ಸಿದ್ಧ · OTP ಪರದೆಯಲ್ಲಿ',
+ phone_label:'ಮೊಬೈಲ್ ಸಂಖ್ಯೆ', phone_ph:'10 ಅಂಕಿ', send_otp:'OTP ಕಳುಹಿಸಿ',
+ otp_title:'OTP ಪರಿಶೀಲನೆ', otp_sub:'ಕೋಡ್ ಕಳುಹಿಸಲಾಗಿದೆ', demo_otp:'ಡೆಮೊ OTP',
+ verify:'ಪರಿಶೀಲಿಸಿ', resend:'ಪುನಃ', wrong_otp:'ತಪ್ಪು OTP. ಪುನಃ ಪ್ರಯತ್ನ.',
+ otp_verified:'ಸಂಖ್ಯೆ ದೃಢೀಕೃತ ✔', reg_title:'ಕುಶಲಕರ್ಮಿ ನೋಂದಣಿ',
+ full_name:'ನಿಮ್ಮ ಹೆಸರು', craft_cat:'ನಿಮ್ಮ ಕಲೆ', village:'ಹಳ್ಳಿ & ಜಿಲ್ಲೆ',
+ pref_lang:'ನಿಮ್ಮ ಭಾಷೆ', complete_reg:'ನೋಂದಾಯಿಸಿ', name_req:'ಹೆಸರು ನಮೂದಿಸಿ.',
+ phone_req:'ಸರಿಯಾದ 10 ಅಂಕಿ ನಮೂದಿಸಿ.', already:'ಖಾತೆ ಇದೆಯಾ? ಸಂಖ್ಯೆ ನಮೂದಿಸಿ.',
+ back:'ಹಿಂದೆ', next:'ಮುಂದೆ',
+ approve:'ಅನುಮೋದಿಸು', reject:'ನಿರಾಕರಿಸು', price:'ಬೆಲೆ', products:'ಉತ್ಪನ್ನಗಳು', orders:'ಆರ್ಡರ್', earnings:'ಆದಾಯ',
+ st_pending:'ಅನುಮತಿ ಬಾಕಿ', st_approved:'ಅನುಮೋದಿತ ✅', st_rejected:'ತಿರಸ್ಕೃತ',
+ st_placed:'ಆರ್ಡರ್ ಆಗಿದೆ', st_assigned:'ಡೆಲಿವರಿ ಬಳಿ', st_picked:'ಪಡೆದರು',
+ st_out:'ಬರುತ್ತಿದೆ', st_delivered:'ತಲುಪಿತು', st_paid:'ಪಾವತಿ ಬಂದಿದೆ',
+ a_hello:'ನಮಸ್ಕಾರ', add_product:'➕ ಹೊಸ ಉತ್ಪನ್ನ',
+ t_new:'ಉತ್ಪನ್ನ ಸೇರಿಸಿ', t_prods:'ನನ್ನ ಉತ್ಪನ್ನಗಳು', t_orders:'ನನ್ನ ಆರ್ಡರ್', t_money:'ನನ್ನ ಆದಾಯ',
+ v_ok_t:'ನೀವು ಸರ್ಕಾರಿ-ಪರಿಶೀಲಿತ ✅', v_ok_d:'ನಿಮ್ಮ ಉತ್ಪನ್ನಗಳಿಗೆ ವಿಶ್ವಾಸ ಬ್ಯಾಡ್ಜ್.',
+ v_wait_t:'ಪರಿಶೀಲನೆ ಬಾಕಿ…', v_wait_d:'ಸರ್ಕಾರಿ ಅಧಿಕಾರಿ ಶೀಘ್ರ ಪರಿಶೀಲಿಸುತ್ತಾರೆ. ಈಗಲೇ ಉತ್ಪನ್ನ ತಯಾರಿಸಿ.',
+ v_rej_t:'ಪರಿಶೀಲನೆ ತಿರಸ್ಕೃತ', v_rej_d:'ಕ್ಲಸ್ಟರ್ ಕಚೇರಿ ಸಂಪರ್ಕಿಸಿ.',
+ no_products:'ಇನ್ನೂ ಉತ್ಪನ್ನಗಳಿಲ್ಲ.', w_step1:'ಫೋಟೋ', w_step2:'ಧ್ವನಿ', w_step3:'ಬೆಲೆ',
+ w1_t:'📸 ಉತ್ಪನ್ನ ಫೋಟೋ', w1_sub:'ಯಾವುದೇ ಮೇಜು ಸಾಕು. AI ಸ್ಟುಡಿಯೊ ಗುಣಮಟ್ಟ ಮಾಡುತ್ತದೆ.',
+ choose_photo:'📁 ಫೋಟೋ ತೆಗೆಯಿರಿ / ಆಯ್ಕೆ', enhance:'✨ AI ಸುಧಾರಿಸಿ', enhancing:'ಸುಧಾರಿಸಲಾಗುತ್ತಿದೆ…',
+ before:'ಮೂಲ', after:'AI', cmp_hint:'ಹೋಲಿಸಲು ಎಳೆಯಿರಿ',
+ photo_ok:'✓ ಫೋಟೋ ಸರಿ',
+ invalid_lowres:'❌ ಫೋಟೋ ತುಂಬಾ ಚಿಕ್ಕದು/ಅಸ್ಪಷ್ಟ. ಪುನಃ ತೆಗೆಯಿರಿ.', photo_tip:'💡 ಸಲಹೆ: ಉತ್ತಮ ಬೆಳಕಿನಲ್ಲಿ, ಸರಳ ಹಿನ್ನೆಲೆಯಲ್ಲಿ, ಉತ್ಪನ್ನ ಫ್ರೇಮ್ ತುಂಬಲಿ ಫೋಟೋ ತೆಗಳಿ.', net_off:'ಆಫ್‌ಲೈನ್ ಮೋಡ್', off_banner:'ಇಂಟರ್ನೆಟ್ ಇಲ್ಲ — ನಿಮ್ಮ ಅಪ್‌ಲೋಡ್‌ಗಳು ಈ ಸಾಧನದಲ್ಲಿ ಸುರಕ್ಷಿತ, ನೆಟ್‌ವರ್ಕ್ ಬಂದ ತಕ್ಷಣ ಸ್ವಯಂಚಾಲಿತವಾಗಿ ಸಿಂಕ್ ಆಗುತ್ತದೆ.', pend:'ಐಟಂಗಳು ಸಿಂಕ್ ಬಾಕಿ', sync_now:'⟳ ಈಗ ಸಿಂಕ್', sync_a:'✅ ನೆಟ್‌ವರ್ಕ್ ಮರಳಿದೆ — ', sync_b:' ಐಟಂಗಳು ಸಿಂಕ್ ಆದವು', weak:'📶 ದುರ್ಬಲ ನೆಟ್‌ವರ್ಕ್ — ಲೈಟ್ ಮೋಡ್: ಫೋಟೋ ಸಂಕುಚಿತ', last:'ಕೊನೆಯ ಸಿಂಕ್', sim:'ಡೆಮೊ ಆಫ್‌ಲೈನ್', sim_back:'ಆನ್‌ಲೈನ್',
+ w2_t:'🎤 ಉತ್ಪನ್ನ ಬಗ್ಗೆ ಮಾತನಾಡಿ', w2_sub:'ಮೈಕ್ ಒತ್ತಿ ಮಾತನಾಡಿ. ಬರೆಯಬೇಡಿ.',
+ desc_lang:'ನಾನು ಮಾತನಾಡುವುದು', tap_mic:'ಒತ್ತಿ ಮಾತನಾಡಿ', stop:'ನಿಲ್ಲಿಸಿ',
+ sim_voice:'▶ ಮಾದರಿ ಧ್ವನಿ', transcript:'ಕೇಳಿದ್ದು',
+ mic_hint:'🎤 ಮೈಕ್ ಪ್ರಕಟಿತ (https) ಆ್ಯಪ್‌ನಲ್ಲಿ ಕೆಲಸ ಮಾಡುತ್ತದೆ. ಇಲ್ಲಿ ಮಾದರಿ ಧ್ವನಿ ಬಳಸಿ.',
+ gen_ai:'🤖 ನನ್ನ ಪಟ್ಟಿ ಮಾಡಿ', gen_note:'AI ಇಂಗ್ಲಿಷ್ + ಹಿಂದಿಯಲ್ಲಿ ಬರೆಯುತ್ತದೆ. ಸಂಪಾದಿಸಬಹುದು.',
+ gen_title:'ಶೀರ್ಷಿಕೆ', gen_desc:'ವಿವರಣೆ', gen_tags:'ಟ್ಯಾಗ್', category:'ವರ್ಗ',
+ need_desc:'ಮೊದಲು ಮಾತನಾಡಿ.', need_photo:'ಮೊದಲು ಫೋಟೋ.',
+ w3_t:'💰 ಸಮಂಜಸ ಬೆಲೆ', w3_sub:'AI ಮಾರುಕಟ್ಟೆ ನಿಜವಾದ ಬೆಲೆಗಳನ್ನು ನೋಡಿ ಹೇಳುತ್ತದೆ.',
+ material_cost:'ವಸ್ತು ವೆಚ್ಚ (₹)', hours:'ಕೆಲಸದ ಗಂಟೆಗಳು', calc:'ಸಮಂಜಸ ಬೆಲೆ ಪಡೆಯಿರಿ',
+ fair_calc:'ನಿಮ್ಮ ನ್ಯಾಯದ ಕನಿಷ್ಠ (ವೆಚ್ಚ + ಶ್ರಮ)', market_band:'ಮಾರುಕಟ್ಟೆ ಶ್ರೇಣಿ',
+ live_comp:'ಕಲಾಸೇತು ಮಾರಾಟಗಾರರಿಂದ ಲೈವ್', price_src:'ಮೂಲ:', suggested:'ಸಲಹು ಬೆಲೆ',
+ confidence:'ವಿಶ್ವಾಸ', final_price:'ನಿಮ್ಮ ಬೆಲೆ (₹)', publish:'🚀 ಸರ್ಕಾರಿ ಅನುಮತಿಗೆ ಕಳುಹಿಸಿ',
+ published:'ಕಳುಹಿಸಿದೆವು! ಅಧಿಕಾರಿಗೆ ಅಲರ್ಟ್ ✓',
+ p_rejected:'ತಿರಸ್ಕೃತ. ಟಿಪ್ಪಣಿ: ', my_orders_t:'ಆರ್ಡರ್ & ಡೆಲಿವರಿ',
+ earned_from:'ತಲುಪಿತು & ಪಾವತಿ', empty_orders:'ಇನ್ನೂ ಆರ್ಡರ್ ಇಲ್ಲ.',
+ earnings_note:'ಪಾವತಿ ಮನೆ ಬಾಗಿಲಲ್ಲಿ. 0% ಕಮಿಷನ್.',
+ v_dash:'ಪರಿಶೀಲನೆ', v_artisans:'ಕುಶಲಕರ್ಮಿಗಳು', v_products:'ಉತ್ಪನ್ನಗಳು', v_hist:'ದಾಖಲೆ',
+ v_no_artisan:'ಯಾರೂ ಕಾಯುತ್ತಿಲ್ಲ.', v_no_prod:'ಉತ್ಪನ್ನಗಳಿಲ್ಲ.', v_by:'—', craft:'ಕಲೆ',
+ c_shop:'ಅಧಿಕೃತ ಕೈಕೆಲಸ� ವಸ್ತುಗಳು', c_sub:'ಪ್ರತಿ ಉತ್ಪನ್ನ ಸರ್ಕಾರಿ ಅನುಮತಿ. ಮನೆಯಲ್ಲಿ ಪಾವತಿ.',
+ by_artisan:'—', verified:'ಸರ್ಕಾರಿ-ಪರಿಶೀಲಿತ', pod_t:'ಡೆಲಿವರಿಯಲ್ಲಿ ಪಾವತಿ',
+ addr:'ವಿಳಾಸ', place_order:'ಆರ್ಡರ್ — ಡೆಲಿವರಿಯಲ್ಲಿ ಪಾವತಿ', my_orders:'ನನ್ನ ಆರ್ಡರ್',
+ alert_c:'ಅಲರ್ಟ್', ch_all:'ಎಲ್ಲ', no_alerts:'ಅಲರ್ಟ್ ಇಲ್ಲ.',
+},
+mr:{
+ app_name:'कलासेतू', tagline:'कारागीरांसाठी डिजिटल पूल',
+ home:'मुख्यपृष्ठ', alerts:'अलर्ट', support:'मदत', logout:'बाहेर', reset:'डेमो रीसेट', bell:'अलर्ट',
+ choose_role:'तुम्ही कोण?',
+ role_artisan:'कारागीर', role_artisan_d:'नोंदणी · AI ने विक्री',
+ role_verifier:'सरकारी तपासणी', role_verifier_d:'कारागीर व उत्पादने मंजूर',
+ role_logistics:'डिलिव्हरी', role_logistics_d:'वितरण व पैसे',
+ role_customer:'खरेदी', role_customer_d:'खरी हस्तकला · डिलिव्हरीवर पैसे',
+ hero_badge:'सरकारी दृढ़ीकृत कारागीर · AI कॅटलॉग · डिलिव्हरीवर पैसे',
+ hero_title:'बोला. फोटो काढा. संपूर्ण भारतात विका.',
+ hero_sub:'एक फोटो + तुमचा आवाज = व्यावसायिक ऑनलाइन दुकान. मोफत.',
+ hero_cta:'सुरू करा',
+ how1:'📲 OTP नोंदणी', how2:'📸 फोटो + आवाज', how3:'🏛️ सरकारी मंजुरी', how4:'💰 डिलिव्हरी व उत्पन्न',
+ demo_note:'डेमो: खाती तयार · OTP स्क्रीनवर',
+ phone_label:'मोबाईल नंबर', phone_ph:'10 अंकी नंबर', send_otp:'OTP पाठवा',
+ otp_title:'OTP तपासणी', otp_sub:'कोड पाठवला', demo_otp:'डेमो OTP',
+ verify:'तपासा', resend:'पुन्हा', wrong_otp:'चुकीचा OTP. पुन्हा प्रयत्न.',
+ otp_verified:'नंबर तपासला ✔', reg_title:'कारागीर नोंदणी',
+ full_name:'तुमचे नाव', craft_cat:'तुमची कला', village:'गाव व जिल्हा',
+ pref_lang:'तुमची भाषा', complete_reg:'नोंदणी करा', name_req:'नाव टाका.',
+ phone_req:'योग्य 10 अंकी नंबर टाका.', already:'खाते आहे? नंबर टाका.',
+ back:'मागे', next:'पुढे',
+ approve:'मंजूर', reject:'नाकारा', price:'किंमत', products:'उत्पादने', orders:'ऑर्डर', earnings:'उत्पन्न',
+ st_pending:'मंजुरी बाकी', st_approved:'मंजूर ✅', st_rejected:'नाकारले',
+ st_placed:'ऑर्डर झाला', st_assigned:'डिलिव्हरीकडे', st_picked:'घेतले',
+ st_out:'येत आहे', st_delivered:'पोहोचले', st_paid:'पैसे आले',
+ a_hello:'नमस्कार', add_product:'➕ नवीन उत्पादन',
+ t_new:'उत्पादन जोडा', t_prods:'माझी उत्पादने', t_orders:'माझे ऑर्डर', t_money:'माझे उत्पन्न',
+ v_ok_t:'तुम्ही सरकारी-दृढ़ीकृत ✅', v_ok_d:'तुमच्या उत्पादनांना विश्वास बैज.',
+ v_wait_t:'तपासणी बाकी…', v_wait_d:'सरकारी अधिकारी लवकर तपासतील. आता उत्पादने तयार करा.',
+ v_rej_t:'तपासणी नाकारली', v_rej_d:'क्लस्टर कार्यालयाशी संपर्क करा.',
+ no_products:'अजून उत्पादने नाहीत.', w_step1:'फोटो', w_step2:'आवाज', w_step3:'किंमत',
+ w1_t:'📸 उत्पादन फोटो', w1_sub:'कोणतीही टेबल चाले. AI स्टुडिओ गुणवत्ता करेल.',
+ choose_photo:'📁 फोटो घ्या / निवडा', enhance:'✨ AI सुधारा', enhancing:'सुधारत आहे…',
+ before:'मूळ', after:'AI', cmp_hint:'तुलना करा',
+ photo_ok:'✓ फोटो ठीक',
+ invalid_lowres:'❌ फोटो खूप लहान/अस्पष्ट. पुन्हा घ्या.', photo_tip:'💡 टिप: चांगल्या प्रकाशात, साध्या पार्श्वभूमीवर, उत्पादन फ्रेम भरेल असा फोटो घ्या.', net_off:'ऑफलाइन मोड', off_banner:'इंटरनेट नाही — तुमच्या अपलोड या डिव्हाइसवर सुरक्षित आहेत आणि नेटवर्क आल्यावर आपोआप सिंक होतील.', pend:'आयटम सिंक बाकी', sync_now:'⟳ आता सिंक', sync_a:'✅ नेटवर्क परत — ', sync_b:' आयटम सिंक झाले', weak:'📶 कमजोर नेटवर्क — लाइट मोड: फोटो कॉम्प्रेस', last:'शेवटचे सिंक', sim:'डेमो ऑफलाइन', sim_back:'ऑनलाइन',
+ w2_t:'🎤 उत्पादनाबद्दल बोला', w2_sub:'मायक दाबून बोला. लिहू नका.',
+ desc_lang:'मी बोलेन', tap_mic:'दाबून बोला', stop:'थांबा',
+ sim_voice:'▶ नमुना आवाज', transcript:'ऐकलेले',
+ mic_hint:'🎤 मायक प्रकाशित (https) अ‍ॅपमध्ये चालेल. इथे नमुना आवाज वापरा.',
+ gen_ai:'🤖 माझी यादी बनवा', gen_note:'AI इंग्रजी + हिंदीत लिहील. संपादित करा.',
+ gen_title:'शीर्षक', gen_desc:'तपशील', gen_tags:'टॅग', category:'प्रकार',
+ need_desc:'आधी बोला.', need_photo:'आधी फोटो.',
+ w3_t:'💰 योग्य किंमत', w3_sub:'AI बाजारातील खर्या किंमती पाहून सांगतो.',
+ material_cost:'माल खर्च (₹)', hours:'कामाचे तास', calc:'योग्य किंमत मिळवा',
+ fair_calc:'तुमचा न्याय्य पाया (खर्च + मेहनत)', market_band:'बाजार श्रेणी',
+ live_comp:'कलासेतू विक्रेत्यांकडून लाइव्ह', price_src:'स्रोत:', suggested:'सुचवलेली किंमत',
+ confidence:'विश्वास', final_price:'तुमची किंमत (₹)', publish:'🚀 सरकारी मंजुरीसाठी पाठवा',
+ published:'पाठवले! अधिकाऱ्याला अलर्ट ✓',
+ p_rejected:'नाकारले. शेरा: ', my_orders_t:'ऑर्डर व डिलिव्हरी',
+ earned_from:'पोहोचले व पैसे', empty_orders:'अजून ऑर्डर नाही.',
+ earnings_note:'पैसे घरी. 0% कमिशन.',
+ v_dash:'तपासणी', v_artisans:'कारागीर', v_products:'उत्पादने', v_hist:'नोंद',
+ v_no_artisan:'कोण नाही.', v_no_prod:'उत्पादने नाहीत.', v_by:'—', craft:'कला',
+ c_shop:'खरी हस्तोत्पादने', c_sub:'प्रत्येक उत्पादन सरकारी मंजूर. घरी पैसे.',
+ by_artisan:'—', verified:'सरकारी-दृढ़ीकृत', pod_t:'डिलिव्हरीवर पैसे',
+ addr:'पत्ता', place_order:'ऑर्डर — डिलिव्हरीवर पैसे', my_orders:'माझे ऑर्डर',
+ alert_c:'अलर्ट', ch_all:'सर्व', no_alerts:'अलर्ट नाही.',
+},
+bn:{
+ app_name:'কলাসেতু', tagline:'কারিগরদের ডিজিটাল সেতু',
+ home:'হোম', alerts:'অ্যালার্ট', support:'সাহায্য', logout:'লগ আউট', reset:'ডেমো রিসেট', bell:'অ্যালার্ট',
+ choose_role:'আপনি কে?',
+ role_artisan:'কারিগর', role_artisan_d:'নিবন্ধন · AI দিয়ে বিক্রি',
+ role_verifier:'সরকারি যাচাই', role_verifier_d:'কারিগর ও পণ্য অনুমোদন',
+ role_logistics:'ডেলিভারি', role_logistics_d:'পৌঁছে দিন ও টাকা নিন',
+ role_customer:'কিনুন', role_customer_d:'আসল হস্তশিল্প · ডেলিভারিতে টাকা',
+ hero_badge:'সরকারি যাচাইকৃত কারিগর · AI ক্যাটালগ · ডেলিভারিতে পেমেন্ট',
+ hero_title:'বলুন। ছবি তুলুন। সারা ভারতে বিক্রি করুন।',
+ hero_sub:'একটি ছবি + আপনার কণ্ঠ = পেশাদার অনলাইন দোকান। বিনামূল্যে.',
+ hero_cta:'শুরু করুন',
+ how1:'📲 OTP নিবন্ধন', how2:'📸 ছবি + কণ্ঠ', how3:'🏛️ সরকারি অনুমোদন', how4:'💰 ডেলিভারি ও আয়',
+ demo_note:'ডেমো: অ্যাকাউন্ট প্রস্তুত · OTP স্ক্রিনে',
+ phone_label:'মোবাইল নম্বর', phone_ph:'10 সংখ্যা', send_otp:'OTP পাঠান',
+ otp_title:'OTP যাচাই', otp_sub:'কোড পাঠানো হয়েছে', demo_otp:'ডেমো OTP',
+ verify:'যাচাই', resend:'আবার', wrong_otp:'ভুল OTP। আবার চেষ্টা.',
+ otp_verified:'নম্বর যাচাই ✔', reg_title:'কারিগর নিবন্ধন',
+ full_name:'আপনার নাম', craft_cat:'আপনার শিল্প', village:'গ্রাম ও জেলা',
+ pref_lang:'আপনার ভাষা', complete_reg:'নিবন্ধন', name_req:'নাম দিন.',
+ phone_req:'সঠিক 10 সংখ্যা দিন.', already:'অ্যাকাউন্ট আছে? নম্বর দিন.',
+ back:'পিছনে', next:'পরবর্তী',
+ approve:'অনুমোদন', reject:'বাতিল', price:'দাম', products:'পণ্য', orders:'অর্ডার', earnings:'আয়',
+ st_pending:'অনুমোদন বাকি', st_approved:'অনুমোদিত ✅', st_rejected:'বাতিল',
+ st_placed:'অর্ডার হয়েছে', st_assigned:'ডেলিভারির কাছে', st_picked:'নিয়েছে',
+ st_out:'আসছে', st_delivered:'পৌঁছেছে', st_paid:'টাকা এসেছে',
+ a_hello:'নমস্কার', add_product:'➕ নতুন পণ্য',
+ t_new:'পণ্য যোগ', t_prods:'আমার পণ্য', t_orders:'আমার অর্ডার', t_money:'আমার আয়',
+ v_ok_t:'আপনি সরকারি-যাচাইকৃত ✅', v_ok_d:'আপনার পণ্যে বিশ্বাসের ব্যাজ.',
+ v_wait_t:'যাচাই বাকি…', v_wait_d:'সরকারি কর্মকর্তা শীঘ্রই যাচাই করবেন। এখনই পণ্য তৈরি করুন।',
+ v_rej_t:'যাচাই বাতিল', v_rej_d:'ক্লাস্টার অফিসে যোগাযোগ করুন.',
+ no_products:'এখনও পণ্য নেই.', w_step1:'ছবি', w_step2:'কণ্ঠ', w_step3:'দাম',
+ w1_t:'📸 পণ্যের ছবি', w1_sub:'যেকোনো টেবিল চলবে. AI স্টুডিও মান করবে.',
+ choose_photo:'📁 ছবি তুলুন / বাছুন', enhance:'✨ AI উন্নত করুন', enhancing:'উন্নত হচ্ছে…',
+ before:'আসল', after:'AI', cmp_hint:'তুলনা করুন',
+ photo_ok:'✓ ছবি ঠিক',
+ invalid_lowres:'❌ ছবি খুব ছোট/অস্পষ্ট. আবার তুলুন.', photo_tip:'💡 টিপ: ভালো আলোতে, সাদামাটা পটভূমিতে, পণ্য ফ্রেম ভরুক এমন ছবি তুলুন।', net_off:'অফলাইন মোড', off_banner:'ইন্টারনেট নেই — আপনার আপলোডগুলি এই ডিভাইসে সুরক্ষিত আছে, নেটওয়ার্ক এলে স্বয়ংক্রিয়ভাবে সিঙ্ক হবে।', pend:'আইটেম সিঙ্ক বাকি', sync_now:'⟳ এখনই সিঙ্ক', sync_a:'✅ নেটওয়ার্ক ফিরেছে — ', sync_b:' আইটেম সিঙ্ক হয়েছে', weak:'📶 দুর্বল নেটওয়ার্ক — লাইট মোড: ছবি সংকুচিত', last:'শেষ সিঙ্ক', sim:'ডেমো অফলাইন', sim_back:'অনলাইন',
+ w2_t:'🎤 পণ্য সম্পর্কে বলুন', w2_sub:'মাইক চেপে বলুন. লিখবেন না.',
+ desc_lang:'আমি বলব', tap_mic:'চেপে বলুন', stop:'থামুন',
+ sim_voice:'▶ নমুনা ভয়েস', transcript:'শোনা গেছে',
+ mic_hint:'🎤 মাইক প্রকাশিত (https) অ্যাপে কাজ করবে. এখানে নমুনা ভয়েস ব্যবহার করুন.',
+ gen_ai:'🤖 আমার লিস্টিং বানাও', gen_note:'AI ইংরেজি + হিন্দিতে লেখে. সম্পাদনা করুন.',
+ gen_title:'শিরোনাম', gen_desc:'বিবরণ', gen_tags:'ট্যাগ', category:'ধরন',
+ need_desc:'আগে বলুন.', need_photo:'আগে ছবি.',
+ w3_t:'💰 ন্যায্য দাম', w3_sub:'AI বাজারের সত্যিকার দাম দেখে বলে.',
+ material_cost:'উপকরণ খরচ (₹)', hours:'কাজের ঘণ্টা', calc:'ন্যায্য দাম নিন',
+ fair_calc:'আপনার ন্যায্য ন্যূনতম (খরচ + পরিশ্রম)', market_band:'বাজার পরিসর',
+ live_comp:'কলাসেতু বিক্রেতাদের লাইভ', price_src:'উৎস:', suggested:'প্রস্তাবিত দাম',
+ confidence:'আস্থা', final_price:'আপনার দাম (₹)', publish:'🚀 সরকারি অনুমোদনে পাঠান',
+ published:'পাঠানো হয়েছে! কর্মকর্তাকে অ্যালার্ট ✓',
+ p_rejected:'বাতিল. মন্তব্য: ', my_orders_t:'অর্ডার ও ডেলিভারি',
+ earned_from:'পৌঁছেছে ও টাকা', empty_orders:'এখনও অর্ডার নেই.',
+ earnings_note:'টাকা ঘরে. 0% কমিশন.',
+ v_dash:'যাচাই', v_artisans:'কারিগর', v_products:'পণ্য', v_hist:'লগ',
+ v_no_artisan:'কেউ নেই.', v_no_prod:'পণ্য নেই.', v_by:'—', craft:'শিল্প',
+ c_shop:'আসল হস্তশিল্প', c_sub:'প্রতিটি পণ্য সরকারি অনুমোদিত. ঘরে টাকা.',
+ by_artisan:'—', verified:'সরকারি-যাচাইকৃত', pod_t:'ডেলিভারিতে পেমেন্ট',
+ addr:'ঠিকানা', place_order:'অর্ডার — ডেলিভারিতে টাকা', my_orders:'আমার অর্ডার',
+ alert_c:'অ্যালার্ট', ch_all:'সব', no_alerts:'অ্যালার্ট নেই.',
+},
+gu:{
+ app_name:'કલાસેતુ', tagline:'કારીગરો માટે ડિજિટલ પુલ',
+ home:'હોમ', alerts:'એલર્ટ', support:'મદદ', logout:'લોગ આઉટ', reset:'ડેમો રીસેટ', bell:'એલર્ટ',
+ choose_role:'તમે કોણ?',
+ role_artisan:'કારીગર', role_artisan_d:'નોંધણી · AI થી વેચાણ',
+ role_verifier:'સરકારી ચકાસણી', role_verifier_d:'કારીગર અને પ્રોડક્ટ મંજૂર',
+ role_logistics:'ડિલિવરી', role_logistics_d:'પહોંચાડો અને પૈસા લો',
+ role_customer:'ખરીદો', role_customer_d:'અસલી હસ્તકલા · ડિલિવરી પર પેમેન્ટ',
+ hero_badge:'સરકારી ચકાસાયેલ કારીગર · AI કેટલોગ · ડિલિવરી પર પેમેન્ટ',
+ hero__title:'બોલો. ફોટો લો. આખા ભારતમાં વેચો.',
+ hero_sub:'એક ફોટો + તમારો અવાજ = પ્રોફેશનલ ઓનલાઈન દુકાન. મફત.',
+ hero_cta:'શરૂ કરો',
+ how1:'📲 OTP નોંધણી', how2:'📸 ફોટો + અવાજ', how3:'🏛️ સરકારી મંજૂરી', how4:'💰 ડિલિવરી અને કમાણી',
+ demo_note:'ડેમો: ખાતાં તૈયાર · OTP સ્ક્રીન પર',
+ phone_label:'મોબાઈલ નંબર', phone_ph:'10 આંકડા', send_otp:'OTP મોકલો',
+ otp_title:'OTP ચકાસણી', otp_sub:'કોડ મોકલ્યો', demo_otp:'ડેમો OTP',
+ verify:'ચકાસો', resend:'ફરી', wrong_otp:'ખોટો OTP. ફરી પ્રયાસ.',
+ otp_verified:'નંબર ચકાસાયો ✔', reg_title:'કારીગર નોંધણી',
+ full_name:'તમારું નામ', craft_cat:'તમારી કલા', village:'ગામ અને જિલ્લો',
+ pref_lang:'તમારી ભાષા', complete_reg:'નોંધણી કરો', name_req:'નામ લખો.',
+ phone_req:'સાચા 10 આંકડા લખો.', already:'ખાતું છે? નંબર લખો.',
+ back:'પાછળ', next:'આગળ',
+ approve:'મંજૂર', reject:'નકારો', price:'કિંમત', products:'પ્રોડક્ટ', orders:'ઓર્ડર', earnings:'કમાણી',
+ st_pending:'મંજૂરી બાકી', st_approved:'મંજૂર ✅', st_rejected:'નકારેલ',
+ st_placed:'ઓર્ડર થયો', st_assigned:'ડિલિવરી પાસે', st_picked:'લીધું',
+ st_out:'આવી રહ્યું', st_delivered:'પહોંચ્યું', st_paid:'પૈસા આવ્યા',
+ a_hello:'નમસ્તે', add_product:'➕ નવી પ્રોડક્ટ',
+ t_new:'પ્રોડક્ટ ઉમેરો', t_prods:'મારી પ્રોડક્ટ', t_orders:'મારા ઓર્ડર', t_money:'મારી કમાણી',
+ v_ok_t:'તમે સરકારી-ચકાસાયેલ ✅', v_ok_d:'તમારી પ્રોડક્ટને વિશ્વાસ બેજ.',
+ v_wait_t:'ચકાસણી બાકી…', v_wait_d:'સરકારી અધિકારી ટૂંક સમયમાં ચકાસશે. હમણાં પ્રોડક્ટ તૈયાર કરો.',
+ v_rej_t:'ચકાસણી નકારેલ', v_rej_d:'ક્લસ્ટર કચેરીનો સંપર્ક કરો.',
+ no_products:'હજુ પ્રોડક્ટ નથી.', w_step1:'ફોટો', w_step2:'અવાજ', w_step3:'કિંમત',
+ w1_t:'📸 પ્રોડક્ટ ફોટો', w1_sub:'કોઈપણ ટેબલ ચાલે. AI સ્ટુડિયો ગુણવત્તા કરશે.',
+ choose_photo:'📁 ફોટો લો / પસંદ કરો', enhance:'✨ AI સુધારો', enhancing:'સુધારી રહ્યા છીએ…',
+ before:'અસલ', after:'AI', cmp_hint:'સરખાવવા ખેંચો',
+ photo_ok:'✓ ફોટો બરાબર',
+ invalid_lowres:'❌ ફોટો ખૂબ નાનો/અસ્પષ્ટ. ફરી લો.', photo_tip:'💡 ટીપ: સારા પ્રકાશમાં, સાદા બેકગ્રાઉન્ડ પર, પ્રોડક્ટ ફ્રેમ ભરે એવી ફોટો લો.', net_off:'ઓફલાઇન મોડ', off_banner:'ઇન્ટરનેટ નથી — તમારા અપલોડ આ ડિવાઇસ પર સુરક્ષિત છે અને નેટવર્ક આવતાં આપોઆપ સિંક થશે.', pend:'આઇટમ સિંક બાકી', sync_now:'⟳ હવે સિંક', sync_a:'✅ નેટવર્ક પાછું — ', sync_b:' આઇટમ સિંક થયા', weak:'📶 નબળું નેટવર્ક — લાઇટ મોડ: ફોટા કોમ્પ્રેસ', last:'છેલ્લે સિંક', sim:'ડેમો ઓફલાઇન', sim_back:'ઓનલાઇન',
+ w2_t:'🎤 પ્રોડક્ટ વિશે બોલો', w2_sub:'માઇક દબાવી બોલો. લખવાની જરૂર નથી.',
+ desc_lang:'હું બોલીશ', tap_mic:'દબાવી બોલો', stop:'અટકાવો',
+ sim_voice:'▶ નમૂનો અવાજ', transcript:'સંભળાયું',
+ mic_hint:'🎤 માઇક પ્રકાશિત (https) એપમાં ચાલશે. અહીં નમૂનો અવાજ વાપરો.',
+ gen_ai:'🤖 મારી લિસ્ટિંગ બનાવો', gen_note:'AI અંગ્રેજી + હિન્દીમાં લખે. સુધારી શકાય.',
+ gen_title:'શીર્ષક', gen_desc:'વર્ણન', gen_tags:'ટૅગ', category:'પ્રકાર',
+ need_desc:'પહેલા બોલો.', need_photo:'પહેલા ફોટો.',
+ w3_t:'💰 યોગ્ય કિંમત', w3_sub:'AI બજારની સાચી કિંમતો જોઈને કહે છે.',
+ material_cost:'માલ ખર્ચ (₹)', hours:'કામના કલાક', calc:'યોગ્ય કિંમત મેળવો',
+ fair_calc:'તમારો ન્યાયી પાયો (ખર્ચ + મહેનત)', market_band:'બજાર રેન્જ',
+ live_comp:'કલાસેતુ વેચાણકારો તરફથી લાઈવ', price_src:'સ્રોત:', suggested:'સૂચવેલી કિંમત',
+ confidence:'વિશ્વાસ', final_price:'તમારી કિંમત (₹)', publish:'🚀 સરકારી મંજૂરી માટે મોકલો',
+ published:'મોકલ્યું! અધિકારીને એલર્ટ ✓',
+ p_rejected:'નકારેલ. ટિપ્પણી: ', my_orders_t:'ઓર્ડર અને ડિલિવરી',
+ earned_from:'પહોંચ્યું અને પૈસા', empty_orders:'હજુ ઓર્ડર નથી.',
+ earnings_note:'પૈસા ઘરે. 0% કમિશન.',
+ v_dash:'ચકાસણી', v_artisans:'કારીગરો', v_products:'પ્રોડક્ટ', v_hist:'લોગ',
+ v_no_artisan:'કોઈ નથી.', v_no_prod:'પ્રોડક્ટ નથી.', v_by:'—', craft:'કલા',
+ c_shop:'અસલી હસ્તકલા', c_sub:'દરેક પ્રોડક્ટ સરકારી મંજૂર. ઘરે પૈસા.',
+ by_artisan:'—', verified:'સરકારી-ચકાસાયેલ', pod_t:'ડિલિવરી પર પેમેન્ટ',
+ addr:'સરનામું', place_order:'ઓર્ડર — ડિલિવરી પર પેમેન્ટ', my_orders:'મારા ઓર્ડર',
+ alert_c:'એલર્ટ', ch_all:'બધું', no_alerts:'એલર્ટ નથી.',
+},
+ml:{
+ app_name:'കലാസേതു', tagline:'കൈക്കൂലികൾക്കുള്ള ഡിജിറ്റൽ പാലം',
+ home:'ഹോം', alerts:'അലേർട്ട്', support:'സഹായം', logout:'ലോഗ് ഔട്ട്', reset:'ഡെമോ റീസെറ്റ്', bell:'അലേർട്ട്',
+ choose_role:'നിങ്ങൾ ആര്?',
+ role_artisan:'കൈക്കൂലി', role_artisan_d:'രജിസ്റ്റർ · AI വിൽപ്പന',
+ role_verifier:'സർക്കാർ സ്ഥിരീകരണം', role_verifier_d:'കൈക്കൂലിയെയും ഉൽപ്പന്നവും അംഗീകരിക്കുക',
+ role_logistics:'ഡെലിവറി', role_logistics_d:'എത്തിക്കുക, പണം വാങ്ങുക',
+ role_customer:'വാങ്ങാം', role_customer_d:'യഥാർത്ഥ കൈക്കൃതികൾ · ഡെലിവറിയിൽ പണം',
+ hero_badge:'സർക്കാർ സ്ഥിരീകരിച്ച കൈക്കൂലി · AI കാറ്റലോഗ് · ഡെലിവറിയിൽ പണം',
+ hero_title:'സംസാരിക്കുക. ഫോട്ടോ എടുക്കുക. ഇന്ത്യ മുഴുവൻ വിൽക്കുക.',
+ hero_sub:'ഒരു ഫോട്ടോ + നിങ്ങളുടെ ശബ്ദം = പ്രൊഫഷണൽ ഓൺലൈൻ കട. സൗജന്യം.',
+ hero_cta:'ആരംഭിക്കുക',
+ how1:'📲 OTP രജിസ്ട്രേഷൻ', how2:'📸 ഫോട്ടോ + ശബ്ദം', how3:'🏛️ സർക്കാർ അംഗീകാരം', how4:'💰 ഡെലിവറി & വരുമാനം',
+ demo_note:'ഡെമോ: അക്കൗണ്ടുകൾ തയ്യാർ · OTP സ്ക്രീനിൽ',
+ phone_label:'മൊബൈൽ നമ്പർ', phone_ph:'10 അക്കം', send_otp:'OTP അയക്കുക',
+ otp_title:'OTP സ്ഥിരീകരണം', otp_sub:'കോഡ് അയച്ചു', demo_otp:'ഡെമോ OTP',
+ verify:'സ്ഥിരീകരിക്കുക', resend:'വീണ്ടും', wrong_otp:'തെറ്റായ OTP. വീണ്ടും ശ്രമിക്കുക.',
+ otp_verified:'നമ്പർ സ്ഥിരീകരിച്ചു ✔', reg_title:'കൈക്കൂലി രജിസ്ട്രേഷൻ',
+ full_name:'നിങ്ങളുടെ പേര്', craft_cat:'നിങ്ങളുടെ കല', village:'ഗ്രാമം & ജില്ല',
+ pref_lang:'നിങ്ങളുടെ ഭാഷ', complete_reg:'രജിസ്റ്റർ ചെയ്യുക', name_req:'പേര് നൽകുക.',
+ phone_req:'ശരിയായ 10 അക്കം നൽകുക.', already:'അക്കൗണ്ട് ഉണ്ടോ? നമ്പർ നൽകുക.',
+ back:'പിന്നിലേക്ക്', next:'അടുത്തത്',
+ approve:'അംഗീകരിക്കുക', reject:'നിരസിക്കുക', price:'വില', products:'ഉൽപ്പന്നങ്ങൾ', orders:'ഓർഡറുകൾ', earnings:'വരുമാനം',
+ st_pending:'അംഗീകാരം ബാക്കി', st_approved:'അംഗീകരിച്ചു ✅', st_rejected:'നിരസിച്ചു',
+ st_placed:'ഓർഡർ ചെയ്തു', st_assigned:'ഡെലിവറിയിൽ', st_picked:'ശേഖരിച്ചു',
+ st_out:'വരുന്നു', st_delivered:'എത്തി', st_paid:'പണം വന്നു',
+ a_hello:'നമസ്കാരം', add_product:'➕ പുതിയ ഉൽപ്പന്നം',
+ t_new:'ഉൽപ്പന്നം ചേർക്കുക', t_prods:'എന്റെ ഉൽപ്പന്നങ്ങൾ', t_orders:'എന്റെ ഓർഡറുകൾ', t_money:'എന്റെ വരുമാനം',
+ v_ok_t:'നിങ്ങൾ സർക്കാർ-സ്ഥിരീകരിച്ചയാൾ ✅', v_ok_d:'നിങ്ങളുടെ ഉൽപ്പന്നത്തിന് വിശ്വാസ ബാഡ്ജ്.',
+ v_wait_t:'സ്ഥിരീകരണം ബാക്കി…', v_wait_d:'സർക്കാർ ഉദ്യോഗസ്ഥൻ ഉടൻ പരിശോധിക്കും. ഇപ്പോൾ തന്നെ ഉൽപ്പന്നം തയ്യാറാക്കുക.',
+ v_rej_t:'സ്ഥിരീകരണം നിരസിച്ചു', v_rej_d:'ക്ലസ്റ്റർ ഓഫീസുമായി ബന്ധപ്പെടുക.',
+ no_products:'ഇതുവരെ ഉൽപ്പന്നങ്ങളില്ല.', w_step1:'ഫോട്ടോ', w_step2:'ശബ്ദം', w_step3:'വില',
+ w1_t:'📸 ഉൽപ്പന്ന ഫോട്ടോ', w1_sub:'ഏത് ടേബിളും മതി. AI സ്റ്റുഡിയോ നിലവാരം നൽകും.',
+ choose_photo:'📁 ഫോട്ടോ എടുക്കുക / തിരഞ്ഞെടുക്കുക', enhance:'✨ AI മെച്ചപ്പെടുത്തുക', enhancing:'മെച്ചപ്പെടുത്തുന്നു…',
+ before:'യഥാർത്ഥം', after:'AI', cmp_hint:'താരതമ്യം ചെയ്യാൻ വലിക്കുക',
+ photo_ok:'✓ ഫോട്ടോ ശരി',
+ invalid_lowres:'❌ ഫോട്ടോ വളരെ ചെറുത്/വ്യക്തമല്ല. വീണ്ടും എടുക്കുക.', photo_tip:'💡 നിർദ്ദേശം: നല്ല വെളിച്ചത്തിൽ, ലളിതമായ പശ്ചാത്തലത്തിൽ, ഉൽപ്പന്നം ഫ്രെയിം നിറയെ വരുന്നതാക്കി ഫോട്ടോ എടുക്കുക.', net_off:'ഓഫ്‌ലൈൻ മോഡ്', off_banner:'ഇന്റർനെറ്റ് ഇല്ല — നിങ്ങളുടെ അപ്‌ലോഡുകൾ ഈ ഉപകരണത്തിൽ സുരക്ഷിതമാണ്, നെറ്റ്‌വർക്ക് വരുമ്പോൾ സ്വയമേവ സിങ്ക് ചെയ്യും.', pend:'ഇനങ്ങൾ സിങ്ക് ബാക്കി', sync_now:'⟳ ഇപ്പോൾ സിങ്ക്', sync_a:'✅ നെറ്റ്‌വർക്ക് തിരിച്ചെത്തി — ', sync_b:' ഇനങ്ങൾ സിങ്ക് ആയി', weak:'📶 ദുർബല നെറ്റ്‌വർക്ക് — ലൈറ്റ് മോഡ്: ഫോട്ടോകൾ ചുരുക്കി', last:'അവസാന സിങ്ക', sim:'ഡെമോ ഓഫ്‌ലൈൻ', sim_back:'ഓൺലൈൻ',
+ w2_t:'🎤 ഉൽപ്പന്നത്തെക്കുറിച്ച് പറയുക', w2_sub:'മൈക്ക് അമർത്തി പറയുക. എഴുതേണ്ട.',
+ desc_lang:'ഞാൻ പറയുന്നത്', tap_mic:'അമർത്തി പറയുക', stop:'നിർത്തുക',
+ sim_voice:'▶ സാമ്പിൾ വോയ്സ്', transcript:'കേട്ടത്',
+ mic_hint:'🎤 മൈക്ക് പ്രസിദ്ധീകരിച്ച (https) ആപ്പിൽ പ്രവർത്തിക്കും. ഇവിടെ സാമ്പിൾ വോയ്സ് ഉപയോഗിക്കുക.',
+ gen_ai:'🤖 എന്റെ ലിസ്റ്റിംഗ് ഉണ്ടാക്കുക', gen_note:'AI ഇംഗ്ലീഷ് + ഹിന്ദിയിൽ എഴുതും. തിരുത്താം.',
+ gen_title:'തലക്കെട്ട്', gen_desc:'വിവരണം', gen_tags:'ടാഗ്', category:'വിഭാഗം',
+ need_desc:'ആദ്യം പറയുക.', need_photo:'ആദ്യം ഫോട്ടോ.',
+ w3_t:'💰 ന്യായമായ വില', w3_sub:'AI മാർക്കറ്റിലെ യഥാർത്ഥ വിലകൾ നോക്കി പറയുന്നു.',
+ material_cost:'വസ്തു ചെലവ് (₹)', hours:'ജോലി മണിക്കൂർ', calc:'ന്യായ വില നേടുക',
+ fair_calc:'നിങ്ങളുടെ ന്യായ തുക (ചെലവ് + അധ്വാനം)', market_band:'മാർക്കറ്റ് പരിധി',
+ live_comp:'കലാസേതു വിൽപ്പനക്കാരിൽ നിന്ന് ലൈവ്', price_src:'ഉറവിടം:', suggested:'നിർദ്ദേശ വില',
+ confidence:'വിശ്വാസം', final_price:'നിങ്ങളുടെ വില (₹)', publish:'🚀 സർക്കാർ അംഗീകാരത്തിന് അയക്കുക',
+ published:'അയച്ചു! ഉദ്യോഗസ്ഥന് അലേർട്ട് ✓',
+ p_rejected:'നിരസിച്ചു. അഭിപ്രായം: ', my_orders_t:'ഓർഡറുകളും ഡെലിവറിയും',
+ earned_from:'എത്തി & പണം', empty_orders:'ഇതുവരെ ഓർഡറില്ല.',
+ earnings_note:'പണം വീട്ടിൽ. 0% കമ്മീഷൻ.',
+ v_dash:'സ്ഥിരീകരണം', v_artisans:'കൈക്കൂലികൾ', v_products:'ഉൽപ്പന്നങ്ങൾ', v_hist:'ലോഗ്',
+ v_no_artisan:'ആരുമില്ല.', v_no_prod:'ഉൽപ്പന്നങ്ങളില്ല.', v_by:'—', craft:'കല',
+ c_shop:'യഥാർത്ഥ കൈക്കൃതികൾ', c_sub:'ഓരോ ഉൽപ്പന്നവും സർക്കാർ അംഗീകരിച്ചത്. വീട്ടിൽ പണം.',
+ by_artisan:'—', verified:'സർക്കാർ-സ്ഥിരീകരിച്ച', pod_t:'ഡെലിവറിയിൽ പണം',
+ addr:'വിലാസം', place_order:'ഓർഡർ — ഡെലിവറിയിൽ പണം', my_orders:'എന്റെ ഓർഡറുകൾ',
+ alert_c:'അലേർട്ട്', ch_all:'എല്ലാം', no_alerts:'അലേർട്ട് ഇല്ല.',
+}};
+function t(k, vars){
+  let s = (I18N[S.lang] && I18N[S.lang][k]) || I18N.en[k] || k;
+  if(vars){ for(const key in vars){ s = s.split('{'+key+'}').join(vars[key]); } }
+  return s;
+}
+function t_en(k, vars){ let s = I18N.en[k]||k; if(vars){ for(const key in vars){ s = s.split('{'+key+'}').join(vars[key]); } } return s; }
+const LANGS = [['en','English'],['hi','हिन्दी'],['te','తెలుగు'],['ta','தமிழ்'],['kn','ಕನ್ನಡ'],['mr','मराठी'],['bn','বাংলা'],['gu','ગુજરાતી'],['ml','മലയാളം']];
+const VOICE_SAMPLES = {
+ hi:'यह पोचम्पल्ली इक्कत की रेशम की साड़ी है। इसे बुनने में छह दिन लगते हैं। रंग प्राकृतिक रंगों वाले हैं।',
+ te:'ఇది పోచంపల్లి ఇక్�త్ పట్టు చీర. దీన్ని నేయడానికి ఆరు రోజులు పడుతుంది. రంగులు సహజ రంజనాలతో వేశారు.',
+ en:'This is a Pochampally ikkat silk saree. It takes six days to weave. The colours are from natural dyes.',
+ ta:'இது பூசம்பள்ளி இக்கத் பட்டுச் சேலை. நெசவுக்கு ஆறு நாட்கள் ஆகும். இயற்கை வண்ணங்கள் பயன்படுத்தப்பட்டன.',
+ kn:'ಇದು ಪೋಚಂಪಳ್ಳಿ ಇಕ್ಕತ್ ರೇಷ್ಮೆ ಸೀರೆ. ನೇಯ್ಗೆಗೆ ಆರು ದಿನಗಳು ಬೇಕು. ಸಹಜ ಬಣ್ಣಗಳನ್ನು ಬಳಸಿದ್ದಾರೆ.',
+ mr:'ही पोचमपल्ली इक्कत रेशमी साडी आहे. विणण्यास सहा दिवस लागतात. नैसर्गिक रंग वापरले आहेत.',
+ bn:'এটি পোচম্পল্লি ইক্কত রেশম শাড়ি। বুনতে ছয় দিন লাগে। প্রাকৃতিক রঙ ব্যবহার করা হয়েছে।',
+ gu:'આ પોચમપલ્લી ઇક્કત રેશમી સાડી છે. વણાટમાં છ દિવસ લાગે છે. કુદરતી રંગો વપરાયા છે.',
+ ml:'ഇത് പോചമ്പള്ളി ഇക്കത്ത് പട്ട് സാരി ആണ്. നെയ്ത്തിന് ആറ് ദിവസം വേണം. പ്രകൃതിദത്ത നിറങ്ങളാണ് ഉപയോഗിച്ചത്.'
+};
+function pickRole(){ ui.authStep='pick'; go('auth'); }
+
+/* ============================ STATE & SEED ============================ */
+const DB_KEY = 'kalasetu_v7';
+const DELIVERY_FEE = 30;   /* logistics department earnings per delivery */
+let S = null;
+function blank(){ return { lang:'en', session:null, users:[], products:[], orders:[], notes:[], otps:{}, seq:100 }; }
+function load(){ try{ const r = localStorage.getItem(DB_KEY); return r ? JSON.parse(r) : null; }catch(e){ return null; } }
+function save(){ try{ localStorage.setItem(DB_KEY, JSON.stringify(S)); }catch(e){} }
+function uid(){ S.seq++; return S.seq; }
+function now(){ return Date.now(); }
+function fmt(n){ return '₹' + Number(n||0).toLocaleString('en-IN'); }
+function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function tstr(ts){ const d = Math.floor((now()-ts)/60000); if(d<1) return 'now'; if(d<60) return d+'m'; const h=Math.floor(d/60); if(h<24) return h+'h'; return Math.floor(h/24)+'d'; }
+
+function svgImg(emoji, c1, c2, label){
+  const svg = "<svg xmlns='http://www.w3.org/2000/svg' width='600' height='600'><defs><linearGradient id='g' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='"+c1+"'/><stop offset='1' stop-color='"+c2+"'/></linearGradient></defs><rect width='600' height='600' fill='url(#g)'/><text x='300' y='330' font-size='210' text-anchor='middle'>"+emoji+"</text>"+(label?"<text x='300' y='470' font-size='30' text-anchor='middle' fill='rgba(255,255,255,0.85)' font-family='Arial'>"+label+"</text>":"")+"</svg>";
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+}
+/* demo selfie avatar + demo Aadhaar card (flat illustration, no real data) */
+function svgSelfie(c1, c2, skin, cloth){
+  const svg = "<svg xmlns='http://www.w3.org/2000/svg' width='300' height='300'><defs><linearGradient id='s' x1='0' y1='0' x2='1' y2='1'><stop offset='0' stop-color='"+c1+"'/><stop offset='1' stop-color='"+c2+"'/></linearGradient></defs><rect width='300' height='300' fill='url(#s)'/><circle cx='150' cy='118' r='58' fill='"+skin+"'/><path d='M62 300 Q62 205 150 205 Q238 205 238 300 Z' fill='"+cloth+"'/><circle cx='128' cy='108' r='7' fill='#1e293b'/><circle cx='172' cy='108' r='7' fill='#1e293b'/><path d='M126 140 Q150 158 174 140' stroke='#1e293b' stroke-width='5' fill='none' stroke-linecap='round'/></svg>";
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+}
+function svgAadhaar(name, num){
+  const svg = "<svg xmlns='http://www.w3.org/2000/svg' width='340' height='214'><rect width='340' height='214' rx='14' fill='#ffffff' stroke='#cbd5e1'/><rect width='340' height='36' rx='14' fill='#f97316'/><rect y='196' width='340' height='18' rx='9' fill='#16a34a'/><text x='170' y='24' font-size='13' font-weight='bold' text-anchor='middle' fill='#ffffff' font-family='Arial'>भारत सरकार · Government of India</text><circle cx='46' cy='120' r='32' fill='#fde68a'/><circle cx='46' cy='106' r='16' fill='#e8a86e'/><path d='M14 152 Q46 130 78 152 L78 158 L14 158 Z' fill='#7c3aed'/><text x='96' y='86' font-size='15' font-weight='bold' fill='#0f172a' font-family='Arial'>"+name+"</text><text x='96' y='108' font-size='11' fill='#475569' font-family='Arial'>DOB: ••/••/••••</text><text x='96' y='132' font-size='11' fill='#475569' font-family='Arial'>मेरा आधार, मेरी पहचान</text><text x='96' y='166' font-size='18' font-weight='bold' fill='#334155' font-family='Courier New' letter-spacing='2'>"+num+"</text><text x='170' y='190' font-size='9' fill='#94a3b8' text-anchor='middle' font-family='Arial'>KalaSetu demo document — not a real Aadhaar</text></svg>";
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+}
+
+function seed(){
+  S = blank();
+  const u = (o)=>{ const x = Object.assign({id:uid(), created:now(), addr:''}, o); S.users.push(x); return x; };
+  const verifier  = u({role:'verifier',  name:'R. Sharma (MSME/DIC)', phone:'9000000001', status:'approved'});
+  const logistics = u({role:'logistics', name:'K. Prasad — Govt Logistics', phone:'9000000002', status:'approved'});
+  const laxmi     = u({role:'artisan',   name:'Lakshmi Devi', phone:'9000000003', status:'approved', craft:'Ikat Weaving', village:'Pochampally, Yadadri-Bhuvanagiri', lang:'te', doc:'Aadhaar •••• 4521', docNo:'2345 6789 4521', selfie:svgSelfie('#c7d2fe','#818cf8','#e8a86e','#7c3aed'), docImg:svgAadhaar('Lakshmi Devi','2345 6789 4521'), pmvi:'PMV-TG-2025-44902'});
+  const narsi     = u({role:'artisan',   name:'Narsimha Yadav', phone:'9000000004', status:'pending', craft:'Cheriyal Painting', village:'Cherial, Siddipet', lang:'te', doc:'Aadhaar •••• 8810', docNo:'8241 5503 8810', selfie:svgSelfie('#fecaca','#f87171','#d99a6c','#b91c1c'), docImg:svgAadhaar('Narsimha Yadav','8241 5503 8810'), pmvi:'—'});
+  const ayesha    = u({role:'customer',  name:'Ayesha Khan', phone:'9000000005', status:'approved', addr:'12-4-3, Kothi Street, Hanamkonda, Warangal — 506001'});
+  const venkat    = u({role:'artisan',   name:'G. Venkatesh', phone:'9000000006', status:'approved', craft:'Pembarthi Brass & Terracotta', village:'Pembarthi, Jangaon', lang:'te', doc:'Aadhaar •••• 7734', docNo:'4521 0098 7734', selfie:svgSelfie('#a7f3d0','#34d399','#c98a52','#065f46'), docImg:svgAadhaar('G. Venkatesh','4521 0098 7734'), pmvi:'PMV-TG-2025-51120'});
+  const sitha     = u({role:'artisan',   name:'Sitha Bai', phone:'9000000007', status:'approved', craft:'Banjara Embroidery & Bamboo Craft', village:'Narsapur Thanda, Medak', lang:'te', doc:'Aadhaar •••• 9018', docNo:'7701 2245 9018', selfie:svgSelfie('#fde68a','#fbbf24','#b97a4b','#9d174d'), docImg:svgAadhaar('Sitha Bai','7701 2245 9018'), pmvi:'—'});
+
+  const p = (o)=>{ const x = Object.assign({id:uid(), created:now(), status:'pending', enhanced:false, remark:''}, o); S.products.push(x); return x; };
+  p({artisanId:laxmi.id, name_en:'Pochampally Ikat Silk Saree — Handwoven', name_hi:'पोचम्पल्ली इक्कत रेशम साड़ी — हैंडलूम',
+     desc_en:'Handwoven over 6 days on a traditional pit loom in Pochampally, Telangana. Iconic double-ikat pattern, natural indigo & madder dyes. GI-tagged heritage craft.',
+     desc_hi:'तेलंगाना के पोचम्पल्ली में 6 दिन में हस्तनिर्मित। प्रसिद्ध डबल-इक्कत डिज़ाइन, प्राकृतिक रंग। GI टैग विरासत शिल्प।',
+     cat:'saree', price:2450, img:svgImg('🥻','#6d28d9','#c026d3','Pochampally Ikat'), tags:'ikkat saree, handloom silk, pochampally, gi craft', matCost:500, hours:24, status:'approved'});
+  p({artisanId:laxmi.id, name_en:'Warangal Cotton Durrie — 4×6 ft', name_hi:'वारंगल सूती दर्री — 4×6 फीट',
+     desc_en:'Handwoven cotton durrie from Warangal looms. Bold borders, vegetable dyes, reversible. Durable & washable.',
+     desc_hi:'वारंगल के करघे पर हस्तनिर्मित सूती दर्री। स्पष्ट बॉर्डर, सब्ज़ी रंग, दो-तरफ़ा। टिकाऊ।',
+     cat:'dhurrie', price:1850, img:svgImg('🧶','#b45309','#f59e0b','Warangal Durrie'), tags:'durrie, handloom cotton, warangal', matCost:350, hours:19, status:'approved'});
+  p({artisanId:laxmi.id, name_en:'Batik Cotton Wall Hanging', name_hi:'बातिक सूती वॉल हैंगिंग',
+     desc_en:'Traditional wax-resist batik on fine cotton, hand painted. Tree-of-life motif. Wooden rod included.',
+     desc_hi:'उत्तम सूती कपड़े पर पारंपरिक बातिक, हस्तचित्रित। जीवन-वृक्ष आकृति। लकड़ी की छड़ सहित।',
+     cat:'painting', price:1250, img:svgImg('🖼️','#0f766e','#14b8a6','Batik Art'), tags:'batik, wall decor, handpainted', matCost:200, hours:14, status:'approved'});
+  p({artisanId:narsi.id, name_en:'Cheriyal Scroll Painting — 3×2 ft', name_hi:'चेरियाल चित्रपट — 3×2 फीट',
+     desc_en:'Authentic Cheriyal scroll — 400-year-old storytelling art of Telangana, painted on khadi with natural colors. GI-tagged.',
+     desc_hi:'असली चेरियाल चित्रपट — तेलंगाना की 400 साल पुरानी कथाकला, खादी पर प्राकृतिक रंग। GI टैग।',
+     cat:'painting', price:3200, img:svgImg('📜','#b91c1c','#f97316','Cheriyal Scroll'), tags:'cheriyal, scroll painting, gi craft', matCost:600, hours:32, status:'pending'});
+  p({artisanId:venkat.id, name_en:'Pembarthi Brass Pot — Hand-Embossed Sheet', name_hi:'पेम्बर्ती पीतल बर्तन — हस्त उकेरी',
+     desc_en:'Traditional Pembarthi metal craft — brass sheet hand-embossed with scenes from village life and mythology. A 600-year-old workshop tradition from Jangaon, Telangana. GI-tagged craft. Perfect for pooja rooms and decor.',
+     desc_hi:'पारंपरिक पेम्बर्ती धातु शिल्प — पीतल की चादर पर गाँव के जीवन और पौराणिक दृश्य हस्त-उकेरे गए। जंगाँव की 600 साल पुरानी परंपरा। GI टैग शिल्प। पूजा घर व सजावट के लिए।',
+     cat:'metal', price:2200, img:svgImg('🏺','#92400e','#f59e0b','Pembarthi Brass'), tags:'pembarthi, brass, metal craft, gi craft', matCost:800, hours:18, status:'approved'});
+  p({artisanId:venkat.id, name_en:'Terracotta Water Pot (Bonam) — Set of 2', name_hi:'टेराकोटा जल कलश (बोनम) — 2 का सेट',
+     desc_en:'Hand-thrown terracotta pots, natural clay fired in a traditional kiln. Keeps water naturally cool. Food-safe, lead-free, eco-friendly. Set of 2 (1L + 2L).',
+     desc_hi:'हस्तनिर्मित टेराकोटा घड़े, पारंपरिक भट्टी में तपाई गई प्राकृतिक मिट्टी। पानी को स्वाभाविक रूप से ठंडा रखता है। भोजन-सुरक्षित, बिना सीसा, पर्यावरण-अनुकूल। 2 का सेट (1L + 2L)।',
+     cat:'pottery', price:850, img:svgImg('🪴','#7c2d12','#ea580c','Terracotta'), tags:'terracotta, pottery, clay pot, eco friendly', matCost:150, hours:9, status:'approved'});
+  p({artisanId:sitha.id, name_en:'Banjara Mirror-Work Sling Bag — Hand Embroidered', name_hi:'बंजारा शीशा-कढ़ाई स्लिंग बैग — हस्तनिर्मित',
+     desc_en:'Authentic Banjara (Lambadi) embroidery with tiny mirrors, cowrie shells and bold tribal stitching on sturdy cotton canvas. 18 pattern-hours of handwork. Adjustable strap, lined interior.',
+     desc_hi:'असली बंजारा (लंबाड़ी) कढ़ाई — छोटे शीशे, कौड़ियाँ और बोल्ड आदिवासी टांका, मज़बूत सूती कैनवास पर। 18 घंटे की हस्तकढ़ाई। एडजस्टेबल स्ट्रैप, अस्तर सहित।',
+     cat:'bag', price:1100, img:svgImg('👝','#9d174d','#ec4899','Banjara Bag'), tags:'banjara, embroidery, sling bag, mirror work', matCost:220, hours:12, status:'approved'});
+  p({artisanId:sitha.id, name_en:'Bamboo Storage Basket — Handwoven', name_hi:'बांस भंडारण टोकरी — हस्तनिर्मित',
+     desc_en:'Handwoven bamboo basket with tight hexagonal weave and cane-rimmed edge. Ideal for fruits, vegetables and household storage. 100% natural, biodegradable, chemical-free.',
+     desc_hi:'हस्तनिर्मित बांस टोकरी, बारीक षट्भुज बुनाई और बेंत किनारा। फल, सब्ज़ियाँ और घरेलू सामान के लिए। 100% प्राकृतिक, बायोडिग्रेडेबल।',
+     cat:'other', price:650, img:svgImg('🧺','#3f6212','#84cc16','Bamboo Basket'), tags:'bamboo, basket, storage, eco friendly', matCost:90, hours:8, status:'approved'});
+
+  const o = {id:uid(), productId:S.products[0].id, artisanId:laxmi.id, customerId:ayesha.id, logisticsId:logistics.id,
+    qty:1, amount:2450, fee:DELIVERY_FEE, total:2450+DELIVERY_FEE, payMode:'pod', payMethod:null, status:'picked',
+    addr:ayesha.addr, created:now()-3600000*5,
+    tl:[{s:'placed',ts:now()-3600000*5},{s:'assigned',ts:now()-3600000*5+120000},{s:'picked',ts:now()-3600000*2}]};
+  S.orders.push(o);
+
+  const n = (userId, ch, msg, ts)=>{ S.notes.push({id:uid(), userId:userId, ch:ch, msg:msg, ts:ts||now(), read:false}); };
+  n(verifier.id, 'inapp', t_en('ver_new_artisan',{n:'Narsimha Yadav', v:'Cherial, Siddipet'}), now()-1800000);
+  n(verifier.id, 'inapp', t_en('ver_new_prod',{p:'Cheriyal Scroll Painting — 3×2 ft', n:'Narsimha Yadav'}), now()-900000);
+  n(laxmi.id, 'inapp', 'Welcome to KalaSetu! You are verified ✅', now()-86400000*3);
+  n(laxmi.id, 'inapp', t_en('prod_out',{p:'Pochampally Ikat Silk Saree', amt:fmt(2450)}), now()-3600000);
+  n(logistics.id, 'inapp', t_en('log_new_task',{p:'Pochampally Ikat Silk Saree', n:'Lakshmi Devi'}), now()-3600000);
+  n(ayesha.id, 'inapp', t_en('cust_new_order',{p:'Pochampally Ikat Silk Saree', amt:fmt(2450)}), now()-3600000);
+  /* authenticity certificates for already-approved items */
+  [0,1,2,4,5,6,7].forEach(function(x,d){ S.products[x].cert={id:'KS-2026-'+S.products[x].id, by:'R. Sharma (MSME/DIC)', ts:now()-86400000*(20-d*3)}; });
+  laxmi.cert={id:'KS-ART-'+laxmi.id, by:'R. Sharma (MSME/DIC)', ts:now()-86400000*115};
+  venkat.cert={id:'KS-ART-'+venkat.id, by:'R. Sharma (MSME/DIC)', ts:now()-86400000*95};
+  sitha.cert={id:'KS-ART-'+sitha.id, by:'R. Sharma (MSME/DIC)', ts:now()-86400000*70};
+  return S;
+}
+
+/* ============================ BOOT ============================ */
+S = load(); if(!S) seed(); S.outbox=S.outbox||[]; S.lastSync=S.lastSync||null;
+if(!S || !S.users || !S.users.length){ seed(); save(); }
+let ui = { view:'landing', tab:null, step:1, authRole:null, authStep:'phone', phone:'', chatOpen:false, cmp:100, pid:null };
+const W = { img:null, raw:null, enhanced:false, descLang:'hi', transcript:'', gen:null, cat:'saree', cost:0, hours:0, price:0, sug:null, err:null };
+
+function me(){ return S.session ? S.users.find(u=>u.id===S.session) : null; }
+function userById(id){ return S.users.find(u=>u.id===id); }
+function prodById(id){ return S.products.find(p=>p.id===id); }
+function pname(p){ return (S.lang==='hi' && p.name_hi) ? p.name_hi : p.name_en; }
+function liveProducts(){ return S.products.filter(p=>p.status==='approved' && userById(p.artisanId) && userById(p.artisanId).status==='approved'); }
+function unread(){ if(!S.session) return 0; return S.notes.filter(n=>n.userId===S.session && !n.read).length; }
+function notify(userId, ch, msg){
+  S.notes.push({id:uid(), userId:userId, ch:ch, msg:msg, ts:now(), read:false});
+  if(ch==='multi'){ S.notes.push({id:uid(), userId:userId, ch:'sms', msg:msg, ts:now(), read:false}); S.notes.push({id:uid(), userId:userId, ch:'wa', msg:msg, ts:now(), read:false}); }
+}
+function toast(m){ const el=document.getElementById('toast'); el.textContent=m; el.classList.add('show'); clearTimeout(window._tt); window._tt=setTimeout(()=>el.classList.remove('show'), 2600); }
+function go(view){ ui.view=view; ui.tab=null; window.scrollTo(0,0); render(); }
+function setLang(l){ S.lang=l; document.documentElement.lang=l; const m=me(); if(m&&m.role==='artisan') m.lang=l; save(); render(); }
+function resetDemo(){ try{ localStorage.removeItem(DB_KEY); }catch(e){} seed(); save(); S.session=null; ui.view='landing'; ui.authStep='phone'; render(); toast('Demo reset ✓'); }
+
+/* ============================ HEADER ============================ */
+function renderHeader(){
+  const m = me();
+  let langSel = '<select class="lang" onchange="setLang(this.value)" aria-label="language">';
+  LANGS.forEach(l=>{ langSel += '<option value="'+l[0]+'"'+(S.lang===l[0]?' selected':'')+'>'+l[1]+'</option>'; });
+  langSel += '</select>';
+  let nav='';
+  if(m){
+    const links=[['home', t('home')]];
+    if(m.role==='customer') links.push(['c_orders', t('my_orders')]);
+    links.push(['alerts', t('alerts')],['support', t('support')]);
+    nav = '<nav class="navlinks">' + links.map(l=>'<span class="nlink'+(ui.view===l[0]?' on':'')+'" onclick="go(\''+l[0]+'\')">'+l[1]+'</span>').join('') + '</nav>';
+  }
+  const bell = m ? '<button class="hbtn bell" onclick="go(\'alerts\')">🔔'+(unread()?'<span class="dot">'+unread()+'</span>':'')+'</button>' : '';
+  const user = m ? '<span class="hbtn" style="cursor:default; max-width:170px; overflow:hidden; text-overflow:ellipsis">👤 '+esc(m.name.split('—')[0].split('(')[0].trim())+'</span><button class="hbtn" onclick="S.session=null;save();go(\'landing\')">'+t('logout')+'</button>' : '';
+  return '<header><div class="hwrap">'
+    + '<span class="logo" onclick="goHome()"><span class="lmark">🪔</span> '+t('app_name')+'</span>'
+    + '<span class="spacer"></span>' + nav + langSel + bell + user
+    + '<button class="hbtn" onclick="resetDemo()">↺</button>'
+    + '</div></header>';
+}
+function goHome(){ const m=me(); go(m ? 'home' : 'landing'); }
+
+/* ============================ LANDING ============================ */
+function viewLanding(){
+  const roles = [
+    ['artisan','🧵','role_artisan','role_artisan_d','#eef2ff'],
+    ['verifier','🏛️','role_verifier','role_verifier_d','#fffbeb'],
+    ['logistics','🚚','role_logistics','role_logistics_d','#f0fdf4'],
+    ['customer','🛍️','role_customer','role_customer_d','#eff6ff'],
+  ];
+  const how = ['how1','how2','how3','how4'];
+  return '<div class="hero">'
+    + '<span class="b info" style="background:rgba(255,255,255,.16); color:#fff; border-color:rgba(255,255,255,.3)">'+t('hero_badge')+'</span>'
+    + '<h1>'+t('hero_title')+'</h1><p>'+t('hero_sub')+'</p>'
+    + '<button class="btn" onclick="pickRole()">'+t('hero_cta')+' →</button>'
+    + '</div>'
+    + '<h2 class="mt">'+t('choose_role')+'</h2>'
+    + '<div class="grid g4">'
+    + roles.map(r=>'<div class="card rolecard" onclick="startRole(\''+r[0]+'\')"><div class="ric" style="background:'+r[4]+'">'+r[1]+'</div><h3>'+t(r[2])+'</h3><div class="sub" style="margin-top:4px">'+t(r[3])+'</div></div>').join('')
+    + '</div>'
+    + '<div class="card demo-cred">💡 '+t('demo_note')+'</div>'
+    + '<div class="card">'+how.map(h=>'<div class="howrow"><span class="hic">'+t(h).split(' ')[0]+'</span><b>'+t(h).split(' ').slice(1).join(' ')+'</b></div>').join('')+'</div>';
+}
+
+/* ============================ AUTH ============================ */
+let regDraft = null;
+function viewAuth(){
+  if(ui.authStep==='pick'){
+    const roles = [['artisan','🧵','role_artisan'],['verifier','🏛️','role_verifier'],['logistics','🚚','role_logistics'],['customer','🛍️','role_customer']];
+    return '<div class="card authbox"><h2>'+t('choose_role')+'</h2>'
+      + roles.map(r=>'<div class="row" style="border:1.5px solid var(--line); border-radius:14px; padding:14px; margin-top:10px; cursor:pointer; font-size:17px" onclick="startRole(\''+r[0]+'\')"><span style="font-size:24px">'+r[1]+'</span><b>'+t(r[2])+'</b><span class="right">›</span></div>').join('')
+      + '</div>';
+  }
+  if(ui.authStep==='otp'){
+    const demo = ui.otpCode ? '<div class="demoOtp">🔐 '+t('demo_otp')+': <span style="font-size:22px; letter-spacing:6px">'+ui.otpCode+'</span></div>' : '';
+    return '<div class="card authbox"><h2>'+t('otp_title')+'</h2><p class="sub">'+t('otp_sub')+' +91 '+esc(ui.phone)+'</p>'
+      + '<div class="otprow">'+[0,1,2,3,4,5].map(i=>'<input class="otp" maxlength="1" inputmode="numeric" id="otp'+i+'" oninput="otpNext('+i+',this.value)">').join('')+'</div>'
+      + demo
+      + '<button class="btn big mt" onclick="doVerifyOtp()">'+t('verify')+' ✓</button>'
+      + '<div class="row mt8" style="justify-content:center"><button class="hbtn" onclick="resendOtp()">↻ '+t('resend')+'</button>'
+      + '<button class="hbtn" onclick="ui.authStep=\'phone\';render()">'+t('back')+'</button></div></div>';
+  }
+  if(ui.authStep==='reg'){
+    let langOpts=''; LANGS.forEach(l=>{ langOpts+='<option value="'+l[0]+'"'+(regDraft.lang===l[0]?' selected':'')+'>'+l[1]+'</option>'; });
+    return '<div class="card authbox"><h2>'+t('reg_title')+'</h2>'
+      + '<label>'+t('full_name')+'</label><input type="text" id="rg_name" value="'+esc(regDraft.name)+'">'
+      + '<label>'+t('craft_cat')+'</label><input type="text" id="rg_craft" value="'+esc(regDraft.craft)+'" placeholder="Ikat / Durrie / Pottery…">'
+      + '<label>'+t('village')+'</label><input type="text" id="rg_village" value="'+esc(regDraft.village)+'">'
+      + '<label>'+t('reg_aadhaar')+'</label><input type="tel" id="rg_doc" maxlength="12" inputmode="numeric" value="'+esc(regDraft.docNo||'')+'" placeholder="123456789012">'
+      + '<label>'+t('reg_selfie')+'</label><div class="row">'
+      + '<button class="btn sec sm" onclick="document.getElementById(\'rselfie\').click()">🤳 📷</button>'
+      + '<input type="file" id="rselfie" accept="image/*" capture="user" style="display:none" onchange="selfiePicked(this)">'
+      + (regDraft.selfie ? '<img src="'+regDraft.selfie+'" style="width:52px;height:52px;border-radius:50%;object-fit:cover;border:2px solid #bbf7d0">' : '<span class="sub">← 📷</span>')
+      + '</div>'
+      + '<label>'+t('pref_lang')+'</label><select id="rg_lang">'+langOpts+'</select>'
+      + '<button class="btn big mt" onclick="regSubmit()">'+t('complete_reg')+' →</button>'
+      + '<button class="btn sec big mt8" onclick="ui.authStep=\'phone\';render()">'+t('back')+'</button></div>';
+  }
+  const demoUser = S.users.find(function(x){ return x.role===ui.authRole; });
+  return '<div class="card authbox"><h2>'+t('role_'+ui.authRole)+'</h2>'
+    + '<label>'+t('phone_label')+'</label>'
+    + '<input type="tel" id="ph" maxlength="10" inputmode="numeric" placeholder="'+t('phone_ph')+'" value="'+esc(ui.phone)+'">'
+    + '<button class="btn big mt" onclick="authPhoneSubmit()">'+t('send_otp')+' →</button>'
+    + (demoUser ? '<div class="demoOtp" style="font-size:14px">🎬 '+t('demo_data')+': <b>'+esc(demoUser.name)+'</b>'
+      + '<div class="sub" style="color:#1e40af">'+(demoUser.role==='artisan'? esc(demoUser.craft||'')+' · '+(S.products.filter(function(pp){return pp.artisanId===demoUser.id;}).length)+' products' : demoUser.role==='customer' ? 'orders & saved address' : 'government account')+'</div>'
+      + '<button class="btn sm amb mt8" onclick="quickDemoLogin()">'+t('demo_use')+' →</button></div>'
+      : '<div class="sub mt8" style="text-align:center">'+t('already')+'</div>')
+    + '<button class="btn sec big mt8" onclick="go(\'landing\')">'+t('back')+'</button></div>';
+}
+function startRole(role){ ui.authRole=role; ui.authStep='phone'; ui.otpCode=null; go('auth'); }
+function authPhoneSubmit(){
+  const v = (document.getElementById('ph').value||'').replace(/\D/g,'');
+  if(v.length!==10){ toast(t('phone_req')); return; }
+  ui.phone = v;
+  const existing = S.users.find(u=>u.phone===v && u.role===ui.authRole);
+  if(!existing && ui.authRole==='artisan'){
+    regDraft = {name:'', craft:'', village:'', lang:(S.lang==='en'?'hi':S.lang), docNo:'', selfie:null};
+    ui.authStep='reg'; render(); return;
+  }
+  sendOtp(v);
+}
+function regSubmit(){
+  regDraft.name = document.getElementById('rg_name').value.trim();
+  regDraft.craft = document.getElementById('rg_craft').value.trim();
+  regDraft.village = document.getElementById('rg_village').value.trim();
+  regDraft.docNo = (document.getElementById('rg_doc').value||'').replace(/\D/g,'');
+  regDraft.lang = document.getElementById('rg_lang').value;
+  if(!regDraft.name){ toast(t('name_req')); return; }
+  if(regDraft.docNo.length!==12){ toast(t('reg_aadhaar_req')); return; }
+  if(!regDraft.selfie){ toast(t('reg_selfie_req')); return; }
+  const verifier = S.users.find(u=>u.role==='verifier');
+  notify(verifier.id, 'multi', t_en('ver_new_artisan',{n:regDraft.name, v:regDraft.village||'—'}));
+  sendOtp(ui.phone);
+}
+/* selfie capture for registration (downscaled, stored on artisan profile) */
+function selfiePicked(el){
+  const f = el.files && el.files[0]; if(!f) return;
+  const rd = new FileReader();
+  rd.onload = function(){
+    const img = new Image();
+    img.onload = function(){
+      const c=document.createElement('canvas');
+      let w=img.width,h=img.height; const sc=Math.min(1,280/Math.max(w,h)); w=Math.round(w*sc); h=Math.round(h*sc);
+      c.width=w; c.height=h; c.getContext('2d').drawImage(img,0,0,w,h);
+      regDraft.selfie = c.toDataURL('image/jpeg',0.8);
+      render();
+    };
+    img.src = rd.result;
+  };
+  rd.readAsDataURL(f);
+}
+function sendOtp(phone){
+  ui.otpCode = String(100000 + Math.floor(Math.random()*900000));
+  S.otps[phone] = ui.otpCode;   /* production: SMS gateway (MSG91/Twilio) sends this */
+  ui.authStep='otp'; render();
+}
+function resendOtp(){ sendOtp(ui.phone); }
+function otpNext(i,v){ if(v && i<5) document.getElementById('otp'+(i+1)).focus(); }
+function doVerifyOtp(){
+  const code = [0,1,2,3,4,5].map(i=>document.getElementById('otp'+i).value).join('');
+  if(code !== S.otps[ui.phone]){ toast(t('wrong_otp')); return; }
+  toast(t('otp_verified'));
+  delete S.otps[ui.phone];
+  let user = S.users.find(u=>u.phone===ui.phone && u.role===ui.authRole);
+  if(!user && ui.authRole==='artisan' && regDraft){
+    const fno = (regDraft.docNo||'').replace(/\D/g,'');
+    const fmat = fno.length===12 ? (fno.slice(0,4)+' '+fno.slice(4,8)+' '+fno.slice(8)) : (regDraft.docNo||'—');
+    user = Object.assign({id:uid(), role:'artisan', status:'pending', created:now(), addr:'', doc:'Aadhaar •••• '+fno.slice(-4), docImg:svgAadhaar(regDraft.name, fmat)}, regDraft, {phone:ui.phone});
+    S.users.push(user);
+  }
+  if(!user && ui.authRole==='customer'){
+    user = {id:uid(), role:'customer', name:'Guest '+ui.phone.slice(-4), phone:ui.phone, status:'approved', addr:'', created:now()};
+    S.users.push(user);
+  }
+  if(!user && (ui.authRole==='verifier'||ui.authRole==='logistics')){
+    user = S.users.find(u=>u.role===ui.authRole);
+  }
+  if(user && user.role==='artisan' && user.lang){ S.lang = user.lang; }
+  S.session = user.id; save();
+  go('home');
+}
+function quickDemoLogin(){
+  const user = S.users.find(u=>u.role===ui.authRole);
+  S.session = user.id; save(); go('home');
+}
+
+/* ============================ ARTISAN HOME (big tiles) ============================ */
+function viewHome(){
+  const m = me();
+  if(m.role!=='artisan') return defView(m);
+  const myP = S.products.filter(p=>p.artisanId===m.id);
+  const live = myP.filter(p=>p.status==='approved').length;
+  const myO = S.orders.filter(o=>o.artisanId===m.id);
+  const earned = myO.filter(o=>o.status==='paid').reduce((a,o)=>a+o.amount,0);
+  let vstrip;
+  if(m.status==='approved'){ vstrip = '<div class="card" style="background:var(--grnd); border-color:#bbf7d0; margin-top:14px; padding:14px"><div class="row"><span style="font-size:24px">🏛️</span><b>'+t('v_ok_t')+'</b><span class="b approved right">'+t('verified')+'</span></div></div>'; }
+  else if(m.status==='rejected'){ vstrip = '<div class="card" style="background:var(--redd); border-color:#fecaca; margin-top:14px; padding:14px"><div class="row"><span style="font-size:24px">⚠️</span><b>'+t('v_rej_t')+'</b><span class="sub">'+t('v_rej_d')+'</span></div></div>'; }
+  else { vstrip = '<div class="card" style="background:var(--accd); border-color:#fde68a; margin-top:14px; padding:14px"><div class="row"><span style="font-size:24px">⏳</span><b>'+t('v_wait_t')+'</b><span class="sub">'+t('v_wait_d')+'</span></div></div>'; }
+  const tiles = [
+    ['startWizard()','➕',t('t_new'),'','var(--prid)'],
+    ['ui.tab=null;go(\'a_prods\')','🧺',t('t_prods'),myP.length+'',''],
+    ['go(\'a_orders\')','📦',t('t_orders'),myO.length+'',''],
+    ['go(\'a_orders\')','💰',t('t_money'),fmt(earned),''],
+  ];
+  return '<h1>'+t('a_hello')+', '+esc(m.name)+' 🙏</h1>'
+    + vstrip
+    + '<div class="grid g4 mt">'+tiles.map(x=>'<div class="card tile" onclick="'+x[0]+'"><div class="tic">'+x[1]+'</div><div class="tl1">'+x[2]+'</div>'+(x[3]?'<div class="tl2">'+x[3]+'</div>':'')+'</div>').join('')+'</div>';
+}
+
+/* ============================ ARTISAN PRODUCTS / ORDERS ============================ */
+function viewArtisanProducts(){
+  const m = me(); const myP = S.products.filter(p=>p.artisanId===m.id);
+  if(!myP.length) return '<h1>'+t('t_prods')+'</h1><div class="card empty"><div class="eic">🧺</div>'+t('no_products')+'<div class="mt"><button class="btn" onclick="startWizard()">'+t('add_product')+'</button></div></div>';
+  return '<h1>'+t('t_prods')+'</h1><div class="grid g3 mt">'
+    + myP.map(p=>{
+      const st = p.status==='approved'?'<span class="b approved">'+t('st_approved')+'</span>':p.status==='rejected'?'<span class="b rejected">'+t('st_rejected')+'</span>':'<span class="b pending">'+t('st_pending')+'</span>';
+      const rej = p.status==='rejected' ? '<div class="sub" style="color:#b91c1c; margin-top:6px">'+t('p_rejected')+esc(p.remark||'—')+'</div>' : '';
+      return '<div class="card"><div style="display:flex; gap:12px"><img class="thumb" src="'+p.img+'"><div style="flex:1; min-width:0"><div class="pname">'+esc(pname(p))+'</div><div class="pprice">'+fmt(p.price)+'</div><div class="mt8">'+st+'</div>'+rej+'</div></div></div>';
+    }).join('') + '</div>';
+}
+function viewArtisanOrders(){
+  const m = me(); const myO = S.orders.filter(o=>o.artisanId===m.id);
+  const paid = myO.filter(o=>o.status==='paid').reduce((a,o)=>a+o.amount,0);
+  if(!myO.length) return '<h1>'+t('my_orders_t')+'</h1><div class="card empty"><div class="eic">📦</div>'+t('empty_orders')+'</div>';
+  return '<h1>'+t('my_orders_t')+'</h1><div class="sub">'+t('earnings_note')+' <b>'+fmt(paid)+'</b></div>'
+    + myO.map(o=>orderCard(o)).join('');
+}
+function orderCard(o){
+  const p = prodById(o.productId);
+  const isCust = me() && me().role==='customer';
+  const steps = ['placed','assigned','picked','out','delivered','paid'];
+  const labels = {placed:'st_placed', assigned:'st_assigned', picked:'st_picked', out:'st_out', delivered:'st_delivered', paid:'st_paid', rt_requested:'rt_requested', rt_picked:'rt_picked', rt_refunded:'rt_refunded'};
+  if(o.return || ['rt_requested','rt_picked','rt_refunded'].indexOf(o.status)>=0){ steps.push('rt_requested','rt_picked','rt_refunded'); }
+  const idx = steps.indexOf(o.status);
+  const agent = userById(o.logisticsId);
+  const stCls = (o.status==='paid'||o.status==='rt_refunded')?'approved':'pending';
+  /* customer return request UI */
+  let retUi = '';
+  if(isCust && o.status==='paid' && !o.return){
+    retUi = '<div class="mt"><button class="btn sec sm" onclick="toggleRet('+o.id+')">'+t('return_req')+'</button>';
+    if(ui.retOpen===o.id){
+      retUi += '<div class="card" style="background:#fffbeb; margin-top:8px"><b>'+t('ret_reason')+'</b><div class="row mt8">'
+        + [1,2,3,4].map(n=>'<button class="btn sm '+(n===4?'sec':'amb')+'" onclick="requestReturn('+o.id+',\'r'+n+'\')">'+t('r'+n)+'</button>').join('') + '</div>'
+        + '<div class="sub" style="font-size:12px; margin-top:6px">'+t('pol3_d')+'</div></div>';
+    }
+    retUi += '</div>';
+  }
+  if(o.return && o.status!=='rt_refunded'){
+    retUi += '<div class="mt"><span class="b pending">↩ '+t(labels[o.status])+'</span></div>';
+  }
+  return '<div class="card"><div class="row"><img class="thumb" src="'+p.img+'"><div style="flex:1; min-width:0"><b>'+esc(pname(p))+'</b>'
+    + '<div class="sub">'+fmt(o.total||o.amount)+' · #'+o.id+' · '+tstr(o.created)+'</div></div>'
+    + '<span class="b '+stCls+'">'+t(labels[o.status]||o.status)+'</span></div>'
+    + (isCust ? '<div class="sub mt8" style="font-size:12.5px">📍 '+t('track_t')+' · '+t('agent_by')+': <b>'+esc(agent?agent.name.split('—')[0].trim():'—')+'</b></div>' : '')
+    + '<hr><div class="tl">'+steps.map((s,i)=>'<div class="tli'+(i<=idx?' done':'')+'">'+t(labels[s])+'</div>').join('')+'</div>'
+    + (isCust ? '<div class="sub" style="font-size:12px">🧾 '+t('bill')+': '+fmt(o.amount)+' + '+fmt(o.fee||DELIVERY_FEE)+' ('+t('del_fee')+') = '+fmt(o.total||o.amount)+'</div>' : '')
+    + retUi + '</div>';
+}
+
+/* ============================ PRODUCT WIZARD ============================ */
+function startWizard(){
+  W.img=null; W.raw=null; W.enhanced=false; W.descLang=(S.lang==='en'?'hi':S.lang); W.transcript=''; W.gen=null;
+  W.cat='saree'; W.cost=0; W.hours=0; W.price=0; W.sug=null; W.err=null;
+  ui.view='a_add'; ui.step=1; render();
+}
+function viewWizard(){
+  const steps=['w_step1','w_step2','w_step3'];
+  let body='';
+  if(ui.step===1){
+    body = '<h2>'+t('w1_t')+'</h2><p class="sub">'+t('w1_sub')+'</p>';
+    if(!W.raw){
+      body += '<div class="upbox mt" onclick="document.getElementById(\'fimg\').click()"><div class="big">📸</div><b style="font-size:18px">'+t('choose_photo')+'</b><input type="file" id="fimg" accept="image/*" capture="environment" style="display:none" onchange="photoPicked(this)"></div>';
+      if(W.err) body += '<div class="errbox">'+t(W.err)+'</div>';
+      body += '<div class="sub center" style="font-size:12.5px">💡 '+t('photo_tip')+'</div>';
+    } else {
+      body += '<div class="cmp"><img src="'+W.img+'">';
+      if(W.enhanced){ body += '<div class="orig" id="origWrap" style="width:'+ui.cmp+'%"><img src="'+W.raw+'" style="width:'+(10000/Math.max(1,ui.cmp))+'%; max-width:none"></div>'; }
+      body += (W.enhanced?'<span class="tagb" style="left:8px">'+t('before')+'</span><span class="tagb" style="right:8px">'+t('after')+'</span>':'')+'</div>';
+      if(W.enhanced) body += '<input type="range" class="cmpR" min="0" max="100" value="'+ui.cmp+'" oninput="ui.cmp=+this.value; document.getElementById(\'origWrap\').style.width=this.value+\'%\'; document.querySelector(\'#origWrap img\').style.width=(10000/Math.max(1,+this.value))+\'%\'"><div class="sub center">'+t('cmp_hint')+'</div>';
+      body += '<div class="okbox">'+(W.enhanced?'✨ '+t('after')+' ✓':t('photo_ok'))+'</div>'
+        + '<div class="sub center" style="font-size:12.5px">💡 '+t('photo_tip')+'</div>'
+        + '<input type="file" id="fimg" accept="image/*" capture="environment" style="display:none" onchange="photoPicked(this)">'
+        + '<div class="row mt" style="justify-content:center">'
+        + '<button class="btn sec" onclick="W.raw=null;W.img=null;W.enhanced=false;W.err=null;render()">🔄</button>'
+        + (!W.enhanced ? '<button class="btn" onclick="doEnhance()">✨ '+t('enhance')+'</button>' : '')
+        + '<button class="btn grn" onclick="ui.step=2;render()">'+t('next')+' →</button></div>';
+    }
+  }
+  if(ui.step===2){
+    let chips=''; LANGS.forEach(l=>{ chips+='<span class="lchip'+(W.descLang===l[0]?' on':'')+'" onclick="W.descLang=\''+l[0]+'\';render()">'+l[1]+'</span>'; });
+    body = '<h2>'+t('w2_t')+'</h2><p class="sub">'+t('w2_sub')+'</p>'
+      + '<div class="chiprow">'+chips+'</div>'
+      + '<div class="micwrap"><button class="mic'+(window._rec?' rec':'')+'" onclick="toggleMic()">🎙️</button>'
+      + '<div class="sub mt8">'+(window._rec?'● '+t('stop'):t('tap_mic'))+'</div>'
+      + '<div class="row mt8" style="justify-content:center"><button class="btn amb sm" onclick="W.transcript=VOICE_SAMPLES[W.descLang];render()">🔊 '+t('sim_voice')+'</button></div>'
+      + '<div class="sub mt8" style="font-size:12.5px">'+t('mic_hint')+'</div></div>'
+      + '<label>'+t('transcript')+'</label><textarea id="transcript">'+esc(W.transcript)+'</textarea>'
+      + '<div class="row mt"><button class="btn sec" onclick="ui.step=1;render()">← '+t('back')+'</button>'
+      + '<button class="btn right" onclick="genListing()">'+t('gen_ai')+' →</button></div>';
+    if(W.gen){
+      body += '<div class="aigen mt"><div class="sub" style="font-weight:800; color:var(--pri2)">🤖 '+t('gen_note')+'</div>'
+        + '<label>'+t('gen_title')+' (EN)</label><input type="text" id="g_title" value="'+esc(W.gen.title)+'">'
+        + '<label>'+t('gen_title')+' (हिन्दी)</label><input type="text" id="g_title_hi" value="'+esc(W.gen.title_hi)+'">'
+        + '<label>'+t('gen_desc')+' (EN)</label><textarea id="g_desc">'+esc(W.gen.desc)+'</textarea>'
+        + '<label>'+t('gen_desc')+' (हिन्दी)</label><textarea id="g_desc_hi">'+esc(W.gen.desc_hi)+'</textarea>'
+        + '<label>'+t('gen_tags')+'</label><input type="text" id="g_tags" value="'+esc(W.gen.tags)+'">'
+        + '<label>'+t('category')+'</label><select id="g_cat">'+cats.map(c=>'<option value="'+c.id+'"'+(W.gen.cat===c.id?' selected':'')+'>'+c.nm+'</option>').join('')+'</select>'
+        + '<button class="btn grn big mt" onclick="ui.step=3;syncGen();render()">'+t('next')+' →</button></div>';
+    }
+  }
+  if(ui.step===3){
+    body = '<h2>'+t('w3_t')+'</h2><p class="sub">'+t('w3_sub')+'</p>'
+      + '<div class="grid g2"><div>'
+      + '<label>'+t('material_cost')+'</label><input type="number" id="w_cost" min="0" value="'+W.cost+'">'
+      + '<label>'+t('hours')+'</label><input type="number" id="w_hours" min="0" value="'+W.hours+'">'
+      + '<button class="btn big mt" onclick="calcSug()">'+t('calc')+'</button>'
+      + '</div><div id="sugBox">'+(W.sug?sugHtml():'<div class="card" style="border-style:dashed; text-align:center; padding:30px">👆 '+t('calc')+'</div>')+'</div></div>'
+      + '<button class="btn grn big mt" onclick="publishProduct()">'+t('publish')+'</button>';
+  }
+  return '<div class="steps">'+steps.map((s,i)=>'<div class="stp'+(ui.step===i+1?' on':ui.step>i+1?' done':'')+'">'+(i+1)+' '+t(s)+'</div>').join('')+'</div>'
+    + '<div class="card">'+body+'</div>';
+}
+function syncGen(){
+  if(!W.gen) return;
+  const e1=document.getElementById('g_title'), e2=document.getElementById('g_desc'), e3=document.getElementById('g_tags'), e4=document.getElementById('g_title_hi'), e5=document.getElementById('g_desc_hi'), e6=document.getElementById('g_cat');
+  if(e1) W.gen.title=e1.value; if(e2) W.gen.desc=e2.value; if(e3) W.gen.tags=e3.value;
+  if(e4) W.gen.title_hi=e4.value; if(e5) W.gen.desc_hi=e5.value; if(e6) W.gen.cat=e6.value;
+}
+
+/* ---- photo pick + VALIDATION (rejects humans) ---- */
+function photoPicked(el){
+  const f = el.files && el.files[0]; if(!f) return;
+  const rd = new FileReader();
+  rd.onload = function(){
+    const img = new Image();
+    img.onload = function(){
+      const c=document.createElement('canvas'); const max=900;
+      let w=img.width,h=img.height;
+      /* basic validity checks */
+      if(w<280||h<280){ W.err='invalid_lowres'; W.raw=null; W.img=null; render(); return; }
+      const sc=Math.min(1,max/Math.max(w,h)); w=Math.round(w*sc); h=Math.round(h*sc);
+      c.width=w; c.height=h; c.getContext('2d').drawImage(img,0,0,w,h);
+      W.err=null;
+      W.raw = c.toDataURL('image/jpeg', lowConn()?0.5:0.75);   /* weak network: lighter photo */
+      W.img = W.raw; W.enhanced=false; ui.cmp=100; render();
+    };
+    img.onerror = function(){ W.err='invalid_lowres'; render(); };
+    img.src = rd.result;
+  };
+  rd.readAsDataURL(f);
+}
+/* production: server-side person detection (MediaPipe BlazeFace / cloud vision).
+   demo: YCbCr skin-region heuristic — rejects person-dominated photos. */
+
+function doEnhance(){
+  toast(t('enhancing'));
+  const img = new Image();
+  img.onload = function(){
+    const c=document.createElement('canvas'); const max=900;
+    let w=img.width,h=img.height; const sc=Math.min(1,max/Math.max(w,h)); w=Math.round(w*sc); h=Math.round(h*sc);
+    c.width=w; c.height=h; const x=c.getContext('2d'); x.drawImage(img,0,0,w,h);
+    const d=x.getImageData(0,0,w,h); const p=d.data;
+    const hist=new Array(256).fill(0);
+    for(let i=0;i<p.length;i+=4){ const l=(p[i]*0.299+p[i+1]*0.587+p[i+2]*0.114)|0; hist[l]++; }
+    const total=w*h; let lo=0,hi=255,acc=0;
+    for(let i=0;i<256;i++){ acc+=hist[i]; if(acc>total*0.02){ lo=i; break; } }
+    acc=0; for(let i=255;i>=0;i--){ acc+=hist[i]; if(acc>total*0.02){ hi=i; break; } }
+    const range=Math.max(1,hi-lo), sat=1.22;
+    for(let i=0;i<p.length;i+=4){
+      for(let ch=0;ch<3;ch++){ let v=(p[i+ch]-lo)*255/range; p[i+ch]=v<0?0:v>255?255:v; }
+      const avg=p[i]*0.299+p[i+1]*0.587+p[i+2]*0.114;
+      for(let ch=0;ch<3;ch++){ p[i+ch]=Math.max(0,Math.min(255, avg+(p[i+ch]-avg)*sat)); }
+    }
+    x.putImageData(d,0,0);
+    const g=x.createRadialGradient(w/2,h/2,Math.min(w,h)*0.3,w/2,h/2,Math.max(w,h)*0.75);
+    g.addColorStop(0,'rgba(255,255,255,0)'); g.addColorStop(1,'rgba(255,255,255,0.55)');
+    x.fillStyle=g; x.fillRect(0,0,w,h);
+    W.img=c.toDataURL('image/jpeg',0.8); W.enhanced=true; ui.cmp=55; save(); render(); toast('✨ ✓');
+  };
+  img.src = W.raw;
+}
+/* ---- voice (Web Speech API; works on published https app) ---- */
+window._rec = null;
+function toggleMic(){
+  if(window._rec){ try{window._rec.stop();}catch(e){} return; }
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){ toast(t('mic_hint')); return; }
+  const r = new SR();
+  r.lang = ({hi:'hi-IN',te:'te-IN',ta:'ta-IN',kn:'kn-IN',mr:'mr-IN',bn:'bn-IN',gu:'gu-IN',ml:'ml-IN',en:'en-IN'})[W.descLang]||'en-IN';
+  r.interimResults=false; r.continuous=false;
+  r.onresult = function(e){ W.transcript = e.results[0][0].transcript; render(); };
+  r.onend = function(){ window._rec=null; render(); };
+  r.onerror = function(){ window._rec=null; render(); toast(t('mic_hint')); };
+  window._rec = r; try{ r.start(); }catch(e){}
+  render();
+}
+
+/* ---- AI listing generation (demo NLP; production: Bhashini STT + Gemini) ---- */
+const cats = [
+  {id:'saree',   kw:['saree','sari','साड़ी','साडी','चीर','చీర','சேலை','ಸೀರೆ','শাড়ি','સાડી','സാരി'], nm:'Handloom Saree', nm_hi:'हैंडलूम साड़ी', idx:{lo:1500,med:2600,hi:4200,n:184}},
+  {id:'dhurrie', kw:['durrie','dhurrie','दर्री','దర్రీ','rug','carpet','கம்பளம்','श्रुग'], nm:'Handloom Durrie', nm_hi:'हैंडलूम दर्री', idx:{lo:900,med:1500,hi:2600,n:97}},
+  {id:'painting',kw:['painting','scroll','चित्र','पेंटिंग','చిత్ర','పెయింటింగ్','ஓவியம்','ছবি','ચિત્ર','ചിത്രം'], nm:'Traditional Painting', nm_hi:'पारंपरिक चित्रकला', idx:{lo:1200,med:2400,hi:5000,n:126}},
+  {id:'metal',   kw:['brass','bell','metal','पीतल','घंटी','ఇత్తడి','గంట','பித்தளை','ಕಂಚು','पितळ','পিতল','પિત્તળ','പിത്തള'], nm:'Metal Craft', nm_hi:'धातु शिल्प', idx:{lo:500,med:1200,hi:3000,n:88}},
+  {id:'pottery', kw:['pot','pottery','clay','मिट्टी','बर्तन','కుండ','మట్టి','மண்','ಮಣ್ಣಿನ','मातीचे','মাটির','માટી','മൺ'], nm:'Terracotta Pottery', nm_hi:'टेराकोटा मृतिका', idx:{lo:350,med:700,hi:1400,n:143}},
+  {id:'bag',     kw:['bag','thaila','पर्स','थैला','బ్యాగ్','సంచి','பை','बॅग','ব্যাগ','બેગ','ബാഗ്'], nm:'Handcrafted Bag', nm_hi:'हस्तनिर्मित बैग', idx:{lo:450,med:850,hi:1600,n:76}},
+  {id:'other',   kw:[], nm:'Handicraft', nm_hi:'हस्तशिल्प', idx:{lo:400,med:900,hi:2000,n:210}},
+];
+const crafts = [['pochampally','पोचम्पल्ली','పోచంపల్లి','பூசம்பள்ளி','Pochampally'],['warangal','वारंगल','వారంగల్','Warangal'],['cheriyal','चेरियाल','చేరియాల్','Cheriyal'],['pembarthi','पेम्बर्ती','Pembarthi'],['banjara','बंजारा','Banjara'],['nirmal','निर्मल','Nirmal'],['ikat','इक्कत','ఇక్కత్','Ikkat']];
+const mats = [['silk','रेशम','పట్టు','பட்டு','Silk'],['cotton','सूती','పత్తి','Cotton'],['brass','पीतल','ఇత్తడి','Brass'],['terracotta','मिट्टी','మట్టి','Terracotta'],['bamboo','बांस','వెదురు','Bamboo']];
+function genListing(){
+  W.transcript = document.getElementById('transcript').value.trim();
+  if(!W.transcript){ toast(t('need_desc')); return; }
+  const low = W.transcript.toLowerCase();
+  let cat = cats.find(c=>c.kw.some(k=>low.includes(k)||W.transcript.includes(k))) || cats[cats.length-1];
+  let craft = crafts.find(c=>c.some(k=>low.includes(String(k).toLowerCase())||W.transcript.includes(k)));
+  let mat = mats.find(m=>m.some(k=>low.includes(String(k).toLowerCase())||W.transcript.includes(k)));
+  const craftN = craft?craft[craft.length-1]:'Telangana';
+  const matN = mat?mat[mat.length-1]:'';
+  W.gen = {
+    cat: cat.id,
+    title: (craft?craftN+' ':'') + cat.nm + (matN?' — '+matN:'') + ', Handmade by Certified Artisan',
+    title_hi: (craft?craftN+' ':'') + cat.nm_hi + (mat?(' — '+mat[1]):'') + ', सरकारी सत्यापित कारीगर द्वारा',
+    desc: 'Authentic '+cat.nm.toLowerCase()+' from '+craftN+', Telangana.'+(matN?' Crafted from premium '+matN.toLowerCase()+'.':'')+' Handcrafted with traditional techniques. Each piece is unique and approved by a government verification officer. Perfect for gifting and daily use. Your purchase directly supports a rural artisan family.',
+    desc_hi: 'तेलंगाना ('+craftN+') का असली '+cat.nm_hi+'। पीढ़ियों से चली आ रही पारंपरिक तकनीक से हस्तनिर्मित। हर उत्पाद सरकारी अधिकारी द्वारा सत्यापित। उपहार व रोज़मर्रा के उपयोग के लिए उत्तम। आपकी खरीद सीधे ग्रामीण कारीगर परिवार तक जाती है।',
+    tags: (craft?craftN.toLowerCase()+', ':'') + cat.nm.toLowerCase() + ', handmade, telangana, artisan, india'
+  };
+  render();
+}
+/* ---- HONEST PRICING: fair floor + LIVE comparables + market index ---- */
+function liveComparables(catId){
+  return S.products.filter(p=>p.status==='approved' && p.cat===catId && userById(p.artisanId) && userById(p.artisanId).status==='approved').slice(0,3);
+}
+function sugHtml(){
+  const s = W.sug;
+  const comps = liveComparables(s.cat);
+  const compHtml = comps.length ? '<div class="sub" style="font-weight:800; margin-top:8px">'+t('live_comp')+'</div>'
+    + comps.map(c=>'<div class="kv"><span>🖼️ '+esc(pname(c)).slice(0,26)+'…</span><b>'+fmt(c.price)+'</b></div>').join('') : '';
+  return '<div class="card pricecard">'
+    + '<div class="kv"><span class="sub" style="font-weight:800">'+t('fair_calc')+'</span><b>'+fmt(s.floor)+'</b></div>'
+    + '<div class="sub" style="font-size:12px">= ₹'+s.cost+'×2 + '+s.hrs+'h×₹60</div>'
+    + '<div class="kv mt8"><span class="sub" style="font-weight:800">'+t('market_band')+'</span><b>'+fmt(s.band.lo)+' — '+fmt(s.band.hi)+'</b></div>'
+    + '<div class="srcnote">📊 '+t('price_src')+' Amazon Karigar · Flipkart Samarth · IndiaMART ('+s.band.n+' items)</div>'
+    + compHtml
+    + '<hr><div class="sub" style="font-weight:800">'+t('suggested')+' ('+t('confidence')+' '+s.conf+'%)</div>'
+    + '<div class="bignum">'+fmt(s.sug)+'</div>'
+    + '<label>'+t('final_price')+'</label><input type="number" id="w_price" value="'+(W.price||s.sug)+'">'
+    + '</div>';
+}
+function calcSug(){
+  W.cost = Math.max(0, +document.getElementById('w_cost').value||0);
+  W.hours = Math.max(0, +document.getElementById('w_hours').value||0);
+  const cat = cats.find(c=>c.id===(W.gen?W.gen.cat:'saree')) || cats[cats.length-1];
+  const floor = Math.round(W.cost*2 + W.hours*60);   /* materials×2 + fair skilled wage ₹60/hr */
+  const band = cat.idx;
+  let sug = Math.max(floor, band.med);               /* never below the fair-wage floor */
+  sug = Math.min(sug, Math.max(floor+1, Math.round(band.hi*1.15)));
+  W.sug = {floor:floor, cost:W.cost, hrs:W.hours, band:band, sug:sug, conf:82, cat:cat.id};
+  W.price = sug;
+  render();
+}
+function publishProduct(){
+  syncGen();
+  if(!W.img){ toast(t('need_photo')); ui.step=1; render(); return; }
+  if(!W.gen){ toast(t('need_desc')); ui.step=2; render(); return; }
+  if(W.sug){ const pe=document.getElementById('w_price'); if(pe) W.price=+pe.value||W.sug.sug; }
+  if(!W.price) W.price = (cats.find(c=>c.id===W.gen.cat)||cats[cats.length-1]).idx.med;
+  const m = me();
+  const p = {id:uid(), artisanId:m.id, name_en:W.gen.title, name_hi:W.gen.title_hi, desc_en:W.gen.desc, desc_hi:W.gen.desc_hi,
+    cat:W.gen.cat, tags:W.gen.tags, price:W.price, img:W.img, enhanced:W.enhanced, matCost:W.cost, hours:W.hours, status:'pending', remark:'', created:now()};
+  S.products.push(p);
+  if(netDown()) queueSync('product', p.name_en);   /* offline: queued for auto-sync */
+  const verifier = S.users.find(u=>u.role==='verifier');
+  notify(verifier.id, 'multi', t_en('ver_new_prod',{p:W.gen.title, n:m.name}));
+  save(); toast(t('published')); go('a_prods');
+}
+
+/* ============================ VERIFIER ============================ */
+function preChips(p){
+  const band=(cats.find(c=>c.id===p.cat)||cats[cats.length-1]).idx;
+  const inBand = p.price>=band.lo*0.5 && p.price<=band.hi*1.25;
+  const descOk = !!(p.desc_en && p.desc_en.length>60);
+  return '<div class="row" style="gap:6px; margin-top:8px">'
+    + '<span class="b '+(p.img?'approved':'rejected')+'">'+t('d_chk_photo')+' '+(p.img?t('d_pass'):t('d_miss'))+'</span>'
+    + '<span class="b '+(p.enhanced?'approved':'grey')+'">'+t('d_chk_enh')+' '+(p.enhanced?t('d_pass'):t('d_warn'))+'</span>'
+    + '<span class="b '+(descOk?'approved':'rejected')+'">'+t('d_chk_desc')+' '+(descOk?t('d_pass'):t('d_miss'))+'</span>'
+    + '<span class="b '+(inBand?'approved':'pending')+'">'+t('d_chk_price')+' '+(inBand?t('d_pass'):t('d_warn'))+'</span></div>';
+}
+function viewVerifier(){
+  const tab = ui.tab || 'artisans';
+  const pendA = S.users.filter(u=>u.role==='artisan' && u.status==='pending');
+  const pendP = S.products.filter(p=>p.status==='pending');
+  let body='';
+  if(tab==='artisans'){
+    body = pendA.length ? pendA.map(u=>'<div class="card" style="cursor:pointer" onclick="openVArtisan('+u.id+')"><div class="between"><div><b>🧵 '+esc(u.name)+'</b><div class="sub">📞 +91 '+u.phone+' · '+t('craft')+': '+esc(u.craft||'—')+' · 📍'+esc(u.village||'—')+'</div></div><span class="b pending">'+t('st_pending')+'</span></div>'
+      + '<div class="row mt" style="justify-content:space-between"><span class="sub">'+t('d_apps')+' '+t('d_pass')+' — '+t('d_back')+' ▸</span><b>›</b></div></div>').join('')
+      : '<div class="card empty"><div class="eic">🎉</div>'+t('v_no_artisan')+'</div>';
+  } else if(tab==='products'){
+    body = pendP.length ? pendP.map(p=>{ const a=userById(p.artisanId);
+      return '<div class="card" style="cursor:pointer" onclick="openVProduct('+p.id+')"><div class="row"><img class="thumb" src="'+p.img+'"><div style="flex:1;min-width:0"><div class="pname">'+esc(p.name_en)+'</div><div class="sub">'+t('v_by')+' '+esc(a?a.name:'?')+' · '+fmt(p.price)+'</div></div><span class="b pending">'+t('st_pending')+'</span></div>'
+      + preChips(p) + '<div class="row mt" style="justify-content:flex-end"><span class="sub">Open full file ▸</span><b>›</b></div></div>'; }).join('')
+      : '<div class="card empty"><div class="eic">🎉</div>'+t('v_no_prod')+'</div>';
+  } else {
+    const events = S.notes.slice().reverse().slice(0,25);
+    body = '<div class="card"><b>'+t('log_t')+'</b><div class="sub">'+t('log_sub')+'</div>'+events.map(n=>notifRow(n)).join('')+'</div>';
+  }
+  return '<h1>🏛️ '+t('v_dash')+'</h1>'
+    + '<div class="pillTabs"><span class="ptab'+(tab==='artisans'?' on':'')+'" onclick="ui.tab=\'artisans\';render()">'+t('v_artisans')+' ('+pendA.length+')</span>'
+    + '<span class="ptab'+(tab==='products'?' on':'')+'" onclick="ui.tab=\'products\';render()">'+t('v_products')+' ('+pendP.length+')</span>'
+    + '<span class="ptab'+(tab==='hist'?' on':'')+'" onclick="ui.tab=\'hist\';render()">'+t('v_hist')+'</span></div>'
+    + '<div class="mt">'+body+'</div>';
+}
+function openVArtisan(id){ ui.detailId=id; go('v_art'); }
+function openVProduct(id){ ui.detailId=id; go('v_prod'); }
+/* ---- FULL artisan profile file ---- */
+function viewVArtisan(){
+  const u = userById(ui.detailId); if(!u) return viewVerifier();
+  const prods = S.products.filter(p=>p.artisanId===u.id);
+  const inits = String(u.name||'?').trim().split(/\s+/).map(w=>w[0]).slice(0,2).join('').toUpperCase();
+  const langN = (LANGS.find(l=>l[0]===(u.lang||'en'))||['','English'])[1];
+  return '<button class="hbtn mt" onclick="go(\'v_home\')">← '+t('d_back')+'</button>'
+    + '<h1>🧵 '+esc(u.name)+' <span class="b pending" style="vertical-align:middle">'+t('st_pending')+'</span></h1>'
+    + '<div class="card"><div class="row"><div style="width:64px;height:64px;border-radius:50%;background:var(--prid);display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:var(--pri2)">'+inits+'</div>'
+    + '<div style="flex:1"><b style="font-size:18px">'+esc(u.name)+'</b><div class="sub">'+esc(u.craft||'—')+' · '+esc(u.village||'—')+'</div></div></div>'
+    + '<div class="kv mt"><span>📞 '+t('phone_label')+'</span><b>+91 '+esc(u.phone)+'</b></div>'
+    + '<div class="kv"><span>🧵 '+t('craft_cat')+'</span><b>'+esc(u.craft||'—')+'</b></div>'
+    + '<div class="kv"><span>📍 '+t('village')+'</span><b>'+esc(u.village||'—')+'</b></div>'
+    + '<div class="kv"><span>🌐 '+t('pref_lang')+'</span><b>'+langN+'</b></div></div>'
+    + '<div class="card"><h3>🪪 '+t('doc_t')+'</h3>'
+    + '<div class="row mt8"><img src="'+(u.selfie||'')+'" style="width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid var(--line)" alt="selfie">'
+    + '<div><b>'+t('doc_selfie')+'</b><div class="sub">'+esc(u.name)+'</div></div></div>'
+    + '<div class="kv mt"><span>'+t('doc_no')+'</span><b style="font-family:monospace; font-size:16px">'+esc(u.docNo||u.doc||'—')+'</b></div>'
+    + '<div class="kv"><span>'+t('doc_pmvi')+'</span><b>'+esc(u.pmvi||'—')+'</b></div>'
+    + '<div class="kv"><span>'+t('doc_reg')+'</span><b>'+new Date(u.created).toLocaleDateString('en-IN')+'</b></div>'
+    + (u.docImg ? '<img src="'+u.docImg+'" style="width:100%; max-width:340px; border-radius:12px; border:1px solid var(--line); margin-top:10px" alt="aadhaar">' : '')
+    + '<div class="sub" style="font-size:12px; margin-top:8px">'+t('doc_priv')+'</div></div>'
+    + '<div class="card"><h3>🧺 '+t('d_products_by')+' ('+prods.length+')</h3>'
+    + (prods.length ? '<div class="row mt" style="gap:10px">'+prods.map(p=>'<img class="thumb" src="'+p.img+'" title="'+esc(p.name_en)+'">').join('')+'</div>' : '<div class="sub mt8">'+t('d_none')+'</div>')+'</div>'
+    + '<div class="card"><label>'+t('d_remark')+'</label><textarea id="v_remark"></textarea>'
+    + '<button class="btn grn big mt" onclick="decideArtisan('+u.id+',1)">✓ '+t('approve')+' — '+t('verified')+'</button>'
+    + '<button class="btn red big mt8" onclick="decideArtisan('+u.id+',0)">✗ '+t('reject')+'</button></div>';
+}
+/* ---- FULL product file ---- */
+function viewVProduct(){
+  const p = prodById(ui.detailId); if(!p) return viewVerifier();
+  const a = userById(p.artisanId);
+  const cat = cats.find(c=>c.id===p.cat)||cats[cats.length-1];
+  const band = cat.idx;
+  const comps = liveComparables(p.cat).filter(c=>c.id!==p.id);
+  return '<button class="hbtn mt" onclick="go(\'v_home\')">← '+t('d_back')+'</button>'
+    + '<div class="card" style="padding:0; overflow:hidden"><img class="pimg" src="'+p.img+'"></div>'
+    + '<div class="card"><div class="between"><h2 style="margin:0; font-size:18px">'+esc(p.name_en)+'</h2><span class="b pending">'+t('st_pending')+'</span></div>'
+    + '<div class="sub mt8">'+esc(p.name_hi)+'</div>'
+    + preChips(p)
+    + '<hr><h3>🇬🇧 English</h3><p>'+esc(p.desc_en)+'</p>'
+    + '<h3>हिन्दी</h3><p>'+esc(p.desc_hi)+'</p>'
+    + '<div class="row mt8"><span class="b info">'+cat.nm+'</span><span class="b grey">#'+esc((p.tags||'').split(',').slice(0,4).join(' #'))+'</span></div></div>'
+    + '<div class="card"><h3>💰 '+t('price')+': '+fmt(p.price)+'</h3>'
+    + (p.matCost ? '<div class="kv"><span>'+t('cp_floor')+'</span><b>'+fmt(Math.round(p.matCost*2+p.hours*60))+'</b></div>' : '')
+    + '<div class="kv"><span>'+t('market_band')+'</span><b>'+fmt(band.lo)+' — '+fmt(band.hi)+'</b></div>'
+    + (comps.length ? '<div class="sub" style="font-weight:800; margin-top:8px">'+t('live_comp')+'</div>'+comps.map(c=>'<div class="kv"><span>🖼️ '+esc(pname(c)).slice(0,28)+'</span><b>'+fmt(c.price)+'</b></div>').join('') : '')
+    + '<div class="srcnote">📊 '+t('price_src')+' Amazon Karigar · Flipkart Samarth · IndiaMART ('+band.n+' items)</div></div>'
+    + '<div class="card"><h3>🧵 '+t('d_apps')+'</h3><div class="row mt8"><img class="thumb" src="'+p.img+'" style="width:44px;height:44px">'
+    + '<div style="flex:1"><b>'+esc(a?a.name:'?')+'</b><div class="sub">'+esc(a?(a.village||''):'')+' · '+esc(a?(a.craft||''):'')+'</div></div>'
+    + (a && a.status==='approved' ? '<span class="b approved">✅ '+t('verified')+'</span>' : '<span class="b pending">⏳ '+t('st_pending')+'</span>')+'</div></div>'
+    + '<div class="card"><label>'+t('d_remark')+'</label><textarea id="v_remark"></textarea>'
+    + '<button class="btn grn big mt" onclick="decideProduct('+p.id+',1)">✓ '+t('approve')+' — GO LIVE</button>'
+    + '<button class="btn red big mt8" onclick="decideProduct('+p.id+',0)">✗ '+t('reject')+'</button></div>';
+}
+function decideArtisan(id, ok){
+  const u = userById(id); if(!u) return;
+  let rem='';
+  const rt = document.getElementById('v_remark'); if(rt) rem = rt.value.trim();
+  if(!ok && !rem){ toast(t('d_rem_req')); return; }
+  u.status = ok?'approved':'rejected'; u.remark = rem;
+  if(ok) u.cert = {id:'KS-ART-'+u.id, by:(me()?me().name:'Govt Officer'), ts:now()};
+  notify(u.id, 'multi', ok ? t_en('art_approved_sms') : t_en('art_rejected_sms'));
+  save(); toast(ok?'✓ Verified — SMS + WhatsApp sent':'✗ Rejected — artisan alerted'); go('v_home');
+}
+function decideProduct(id, ok){
+  const p = prodById(id); if(!p) return;
+  let rem='';
+  const rt = document.getElementById('v_remark'); if(rt) rem = rt.value.trim();
+  if(!ok && !rem){ toast(t('d_rem_req')); return; }
+  p.status = ok?'approved':'rejected'; p.remark = rem;
+  if(ok) p.cert = {id:'KS-2026-'+p.id, by:(me()?me().name:'Govt Officer'), ts:now()};
+  notify(p.artisanId, 'multi', ok ? t_en('prod_approved_sms',{p:p.name_en}) : t_en('prod_rejected_sms',{p:p.name_en}));
+  save(); toast(ok?'✓ Approved — LIVE':'✗ Rejected — artisan alerted'); go('v_home');
+}
+
+/* ============================ LOGISTICS ============================ */
+function viewLogistics(){
+  const m = me();
+  const open = S.orders.filter(o=>o.logisticsId===m.id && o.status!=='paid' && o.status!=='rt_refunded');
+  const done = S.orders.filter(o=>o.logisticsId===m.id && (o.status==='paid'||o.status==='rt_refunded'));
+  const total = done.reduce((a,o)=>a+(o.total||o.amount),0);
+  const earn = done.filter(o=>o.status==='paid').length * DELIVERY_FEE;   /* ₹30 per completed delivery */
+  return '<h1>🚚 '+t('l_dash')+'</h1>'
+    + '<div class="grid g3 mt"><div class="card stat"><div class="sv">'+done.length+'</div><div class="sl">'+t('l_done')+'</div></div>'
+    + '<div class="card stat"><div class="sv">'+fmt(total)+'</div><div class="sl">'+t('l_collected')+'</div></div>'
+    + '<div class="card stat" style="background:linear-gradient(135deg,#fffbeb,#fef3c7)"><div class="sv" style="color:#92400e">'+fmt(earn)+'</div><div class="sl">'+t('my_earn')+'</div></div></div>'
+    + '<div class="sub">'+t('earn_note')+'</div>'
+    + '<div class="card" style="background:var(--blud); border-color:#bfdbfe; margin-top:10px; padding:12px"><b>💰 '+t('pay_split_note')+'</b></div>'
+    + '<h2 class="mt">'+t('l_tasks')+' ('+open.length+')</h2>'
+    + (open.length ? open.map(o=>logCard(o)).join('') : '<div class="card empty"><div class="eic">📭</div>'+t('l_empty')+'</div>');
+}
+function logCard(o){
+  const p = prodById(o.productId); const c = userById(o.customerId); const a = userById(o.artisanId);
+  let act='';
+  if(o.status==='assigned'){ act = '<button class="btn sm" onclick="advance('+o.id+',\'picked\')">'+t('pick')+'</button>'; }
+  else if(o.status==='picked'){ act = '<button class="btn sm amb" onclick="advance('+o.id+',\'out\')">'+t('out')+'</button>'; }
+  else if(o.status==='out'){ act = '<div class="row"><span class="sub">'+t('pay_mode')+' ('+fmt(o.total||o.amount)+'):</span><button class="btn sm grn" onclick="advance('+o.id+',\'paid\',\'upi\')">💳 '+t('upi')+'</button><button class="btn sm grn" onclick="advance('+o.id+',\'paid\',\'cash\')">💵 '+t('cash')+'</button></div>'; }
+  else if(o.status==='rt_requested'){ act = '<div class="row"><span class="b pending">↩ '+t('r'+({r1:1,r2:2,r3:3,r4:4}[o.return&&o.return.reason]||1))+'</span><button class="btn sm amb" onclick="advance('+o.id+',\'rt_picked\')">📦 '+t('rt_picked')+'</button></div>'; }
+  else if(o.status==='rt_picked'){ act = '<button class="btn sm red" onclick="advance('+o.id+',\'rt_refunded\')">💰 '+t('rt_refunded')+' · '+fmt(returnRefundOf(o))+'</button>'; }
+  else if(o.status==='rt_refunded'){ act = '<span class="b grey">↩ '+t('rt_refunded')+' · '+fmt(returnRefundOf(o))+'</span>'; }
+  else { act = '<span class="b approved">'+t('st_paid')+' · '+(o.payMethod==='upi'?t('upi'):t('cash'))+'</span><div class="sub" style="margin-top:6px">'+t('pay_split_note')+'</div>'; }
+  const doneSplit = (o.status==='paid'||o.status==='rt_refunded') ? '<div class="sub" style="font-size:12px; margin-top:6px">✓ '+fmt(o.amount)+' → '+t('role_artisan')+' · '+fmt(o.fee||DELIVERY_FEE)+' → '+t('role_logistics')+'</div>' : '';
+  return '<div class="card mt"><div class="row"><img class="thumb" src="'+p.img+'"><div style="flex:1;min-width:0"><b>'+esc(pname(p))+'</b>'
+    + '<div class="sub">'+t('v_by')+' '+esc(a?a.name:'')+' → 👤'+esc(c?c.name:'')+'<br>📍 '+esc(o.addr||'—')+'</div></div>'
+    + '<div style="text-align:right"><b>'+fmt(o.total||o.amount)+'</b><div class="sub">#'+o.id+'</div></div></div>'
+    + '<div class="mt">'+act+'</div>'+doneSplit+'</div>';
+}
+function advance(id, st, mode){
+  const o = S.orders.find(x=>x.id===id); if(!o) return;
+  o.status = st;
+  if(st==='paid'){ o.payMethod = mode; }
+  const p = prodById(o.productId);
+  if(st==='picked'){ notify(o.customerId,'inapp', t_en('prod_picked',{p:p.name_en})); }
+  if(st==='out'){ notify(o.customerId,'multi', t_en('prod_out',{p:p.name_en, amt:fmt(o.total||o.amount)})); }
+  if(st==='paid'){
+    /* money split: product amount → artisan · delivery fee → logistics dept */
+    notify(o.customerId,'inapp', t_en('receipt_c',{p:p.name_en, total:fmt(o.total||o.amount), mode: mode==='upi'?t('upi'):t('cash')}));
+    notify(o.artisanId,'multi', t_en('art_credit',{p:p.name_en, amt:fmt(o.amount)}));
+    toast(t('paid_split',{total:fmt(o.total||o.amount), amt:fmt(o.amount), fee:fmt(DELIVERY_FEE)}));
+  }
+  if(st==='rt_picked'){
+    notify(o.customerId,'multi', t_en('rt_picked_c',{p:p.name_en, amt:fmt(returnRefundOf(o))}));
+    notify(o.artisanId,'multi', t_en('rt_picked_a',{p:p.name_en}));
+  }
+  if(st==='rt_refunded'){
+    notify(o.customerId,'multi', t_en('rt_refunded_c',{p:p.name_en, amt:fmt(returnRefundOf(o))}));
+    notify(o.artisanId,'inapp', t_en('rt_refunded_a',{p:p.name_en}));
+    toast('💰 '+fmt(returnRefundOf(o))+' ✓');
+  }
+  save(); render();
+}
+/* refund = product + delivery for genuine issues; product only for change-of-mind */
+function returnRefundOf(o){
+  return (o.return && o.return.reason==='r4') ? (o.amount||0) : (o.total||o.amount||0);
+}
+/* customer requests a return (7-day policy) */
+function requestReturn(id, reason){
+  const o = S.orders.find(x=>x.id===id); if(!o) return;
+  o.return = {reason:reason, ts:now()};
+  o.status = 'rt_requested';
+  const p = prodById(o.productId);
+  const log = userById(o.logisticsId);
+  if(log) notify(log.id,'inapp', t_en('ret_new_task',{p:p.name_en}));
+  notify(o.artisanId,'inapp', t_en('art_ret_note',{p:p.name_en}));
+  notify(o.customerId,'inapp', t_en('rt_ok',{p:p.name_en}));
+  if(netDown()) queueSync('return', p.name_en);    /* offline: queued for auto-sync */
+  ui.retOpen = null;
+  save(); render(); toast(t('rt_ok',{p:pname(p)}));
+}
+function toggleRet(id){ ui.retOpen = (ui.retOpen===id) ? null : id; render(); }
+
+/* ============================ CUSTOMER ============================ */
+function viewStore(){
+  const items = liveProducts();
+  return '<h1>🛍️ '+t('c_shop')+'</h1><div class="sub">'+t('c_sub')+'</div>'
+    + '<div class="grid g3 mt">'+ items.map(p=>{
+      const a = userById(p.artisanId);
+      return '<div class="card pcard" onclick="viewProduct('+p.id+')"><img class="pimg" src="'+p.img+'"><div class="pbody"><div class="pname">'+esc(pname(p))+'</div>'
+        + '<div class="pprice">'+fmt(p.price)+'</div><div class="pmeta">'+t('by_artisan')+' '+esc(a.name)+' <span class="b approved" style="font-size:10px">✅</span></div></div></div>';
+    }).join('') + '</div>';
+}
+function viewProduct(pid){
+  if(pid){ ui.pid = pid; go('c_product'); return; }
+  const p = prodById(ui.pid); if(!p) return viewStore();
+  const a = userById(p.artisanId);
+  const desc = (S.lang==='hi'&&p.desc_hi)?p.desc_hi:p.desc_en;
+  return '<button class="hbtn mt" onclick="go(\'c_home\')">← '+t('c_shop')+'</button>'
+    + '<div class="grid g2 mt"><div class="card" style="padding:0; overflow:hidden"><img class="pimg" src="'+p.img+'"></div>'
+    + '<div class="card"><div class="row" style="justify-content:space-between"><h2 style="margin:0">'+esc(pname(p))+'</h2><span class="b approved">✅ '+t('verified')+'</span></div>'
+    + '<div class="pprice" style="font-size:24px">'+fmt(p.price)+'</div>'
+    + '<div class="sub" style="font-size:12.5px">'+t('delivery_note')+' · <b style="cursor:pointer; text-decoration:underline" onclick="go(\'policy\')">'+t('read_pol')+'</b></div>'
+    + '<div class="sub mt8">'+t('by_artisan')+' <b>'+esc(a.name)+'</b> · '+esc(a.village||'')+'</div>'
+    + '<hr><p>'+esc(desc)+'</p>'
+    + '<div class="card" style="background:var(--blud); border-color:#bfdbfe; margin-top:4px"><b>💳 '+t('pod_t')+'</b><div class="sub">'+t('pod_d')+'</div></div>'
+    + '<button class="btn big mt" onclick="go(\'c_checkout\')">'+t('place_order')+'</button>'
+    + '<button class="btn sec big mt8" onclick="go(\'c_passport\')">'+t('cp_open')+'</button>'
+    + '<div class="card" style="background:var(--grnd); border-color:#bbf7d0; margin-top:8px"><b>✅ '+t('cp_strip')+'</b></div></div></div>';
+}
+/* ---- CRAFT PASSPORT (uniqueness: per-product authenticity + provenance) ---- */
+function viewPassport(){
+  const p = prodById(ui.pid); if(!p || p.status!=='approved') return viewStore();
+  const a = userById(p.artisanId);
+  const floor = p.matCost ? Math.round(p.matCost*2 + p.hours*60) : null;
+  const cat = cats.find(c=>c.id===p.cat)||cats[cats.length-1];
+  return '<button class="hbtn mt" onclick="go(\'c_product\')">← '+esc(pname(p)).slice(0,24)+'…</button>'
+    + '<div class="card" style="background:linear-gradient(135deg,#fffbeb,#fef3c7); border:2px solid #f59e0b; text-align:center">'
+    + '<div style="font-size:40px">🛡️</div><h2 style="margin:4px 0">'+t('cp_t')+'</h2>'
+    + '<div class="b approved" style="font-size:13px">✅ '+t('cp_cert')+'</div>'
+    + '<div style="font-family:monospace; font-weight:800; font-size:18px; margin-top:10px; letter-spacing:1px">'+(p.cert?p.cert.id:'—')+'</div>'
+    + '<div class="sub mt8">'+t('cp_vby')+': <b>'+(p.cert?esc(p.cert.by):'—')+'</b><br>'+t('doc_reg')+': '+(p.cert?new Date(p.cert.ts).toLocaleDateString('en-IN'):'—')+'</div>'
+    + '<div class="sub" style="font-size:11.5px; margin-top:6px">📱 In production, a QR on the physical product opens this passport — scan before you buy.</div></div>'
+    + '<div class="card"><div class="row"><div style="width:56px;height:56px;border-radius:50%;background:var(--prid);display:flex;align-items:center;justify-content:center;font-size:24px">🧵</div>'
+    + '<div style="flex:1"><b>'+esc(a.name)+'</b><div class="sub">'+esc(a.craft||'')+' · '+esc(a.village||'')+'</div></div>'
+    + (a.cert?'<span class="b approved">✅</span>':'')+'</div>'
+    + (a.cert ? '<div class="kv mt"><span>'+t('cp_vby')+'</span><b>'+esc(a.cert.by)+'</b></div><div class="sub" style="font-size:12px">ID: '+esc(a.cert.id)+'</div>' : '')
+    + '</div>'
+    + '<div class="card"><div class="row"><img class="thumb" src="'+p.img+'"><div style="flex:1"><b>'+esc(pname(p))+'</b><div class="sub">'+cat.nm+' · '+fmt(p.price)+'</div></div></div></div>'
+    + (p.matCost ? '<div class="card"><h3>🧶 '+t('cp_mats')+'</h3>'
+    + '<div class="kv"><span>'+t('material_cost')+'</span><b>'+fmt(p.matCost)+'</b></div>'
+    + '<div class="kv"><span>'+t('hours')+'</span><b>'+p.hours+' h</b></div>'
+    + '<div class="kv"><span>'+t('cp_floor')+'</span><b>'+fmt(floor)+'</b></div>'
+    + '<div class="sub mt8" style="font-size:12.5px">📈 '+t('price_src')+' Amazon Karigar · Flipkart Samarth · IndiaMART</div></div>' : '')
+    + '<div class="card"><h3>🔊 '+t('cp_story')+'</h3><div class="sub mt8" style="font-size:13.5px">'+esc((S.lang==='hi'&&p.desc_hi)?p.desc_hi:p.desc_en).slice(0,120)+'…</div>'
+    + '<button class="btn big mt" onclick="playVoiceStory()" id="storyBtn">'+t('cp_play')+'</button></div>'
+    + '<div class="card" style="background:var(--grnd); border-color:#bbf7d0"><b>✅ '+t('cp_strip')+'</b></div>';
+}
+function playVoiceStory(){
+  const p = prodById(ui.pid); if(!p) return;
+  try{
+    if(window.speechSynthesis && speechSynthesis.speaking){ speechSynthesis.cancel(); toast('■'); return; }
+    const txt = (S.lang==='hi'&&p.desc_hi)?p.desc_hi:p.desc_en;
+    const u = new SpeechSynthesisUtterance(txt);
+    u.lang = S.lang==='hi'?'hi-IN':S.lang==='te'?'te-IN':'en-IN'; u.rate = 0.95;
+    speechSynthesis.speak(u); toast('🔊 '+t('cp_story'));
+  }catch(e){ toast('🔊 '+t('cp_story')); }
+}
+function viewCheckout(){
+  const p = prodById(ui.pid); if(!p) return viewStore();
+  const m = me();
+  return '<h1>'+t('place_order')+'</h1><div class="card mt"><div class="row"><img class="thumb" src="'+p.img+'"><div><b>'+esc(pname(p))+'</b><div class="pprice">'+fmt(p.price)+'</div></div></div>'
+    + '<label>'+t('addr')+'</label><textarea id="addr" placeholder="'+t('addr_ph')+'">'+esc(m.addr||'')+'</textarea>'
+    + '<div class="card" style="background:#f8fafc"><b>🧾 '+t('bill')+'</b>'
+    + '<div class="kv"><span>'+esc(pname(p)).slice(0,26)+'</span><b>'+fmt(p.price)+'</b></div>'
+    + '<div class="kv"><span>'+t('del_fee')+'</span><b>'+fmt(DELIVERY_FEE)+'</b></div>'
+    + '<div class="kv"><span style="font-weight:800">'+t('total_pay')+'</span><b style="font-size:17px; color:var(--pri2)">'+fmt(p.price+DELIVERY_FEE)+'</b></div>'
+    + '<div class="sub" style="font-size:12px; margin-top:6px">'+t('delivery_note')+'</div></div>'
+    + '<div class="card" style="background:var(--grnd); border-color:#bbf7d0"><b>💳 '+t('pod_t')+'</b><div class="sub">'+t('pod_d')+'</div></div>'
+    + '<button class="btn grn big mt" onclick="placeOrder()">'+t('place_order')+' · '+fmt(p.price+DELIVERY_FEE)+'</button></div>';
+}
+function placeOrder(){
+  const p = prodById(ui.pid); const m = me();
+  const addr = document.getElementById('addr').value.trim();
+  if(!addr){ toast(t('addr_req')); return; }
+  m.addr = addr;
+  const log = S.users.find(u=>u.role==='logistics');
+  const o = {id:uid(), productId:p.id, artisanId:p.artisanId, customerId:m.id, logisticsId:log?log.id:null,
+    qty:1, amount:p.price, fee:DELIVERY_FEE, total:p.price+DELIVERY_FEE, payMode:'pod', payMethod:null, status:'assigned', addr:addr, created:now(),
+    tl:[{s:'placed',ts:now()},{s:'assigned',ts:now()}]};
+  S.orders.push(o);
+  if(netDown()) queueSync('order', p.name_en);   /* offline: queued for auto-sync */
+  notify(p.artisanId,'multi', t_en('prod_new_order',{p:p.name_en}));
+  if(log) notify(log.id,'inapp', t_en('log_new_task',{p:p.name_en, n:userById(p.artisanId).name}));
+  notify(m.id,'inapp', t_en('cust_new_order',{p:p.name_en, amt:fmt(p.price)}));
+  save(); toast(t('order_ok')); go('c_orders');
+}
+function viewCustOrders(){
+  const m = me(); const myO = S.orders.filter(o=>o.customerId===m.id);
+  if(!myO.length) return '<h1>'+t('my_orders')+'</h1><div class="card empty"><div class="eic">📦</div>'+t('c_empty')+'<div class="mt"><button class="btn" onclick="go(\'c_home\')">'+t('c_shop')+' →</button></div></div>';
+  return '<h1>'+t('my_orders')+'</h1>'+myO.map(o=>orderCard(o)).join('');
+}
+
+/* ============================ ALERTS ============================ */
+function notifRow(n){
+  const ic = n.ch==='sms'?'✉️':n.ch==='wa'?'🟢':'🔔';
+  const bg = n.ch==='sms'?'var(--redd)':n.ch==='wa'?'#e7f8ee':'var(--prid)';
+  const b = n.ch==='sms'?'<span class="b sms">SMS</span>':n.ch==='wa'?'<span class="b wa">WhatsApp</span>':'<span class="b inapp">App</span>';
+  return '<div class="notif"><div class="nic" style="background:'+bg+'">'+ic+'</div><div style="flex:1"><div style="font-size:14px">'+esc(n.msg)+'</div><div class="ntime">'+tstr(n.ts)+'</div></div>'+b+'</div>';
+}
+function viewAlerts(){
+  const m = me();
+  const mine = S.notes.filter(n=>n.userId===m.id).slice().reverse();
+  const ch = ui.tab || 'all';
+  const shown = ch==='all' ? mine : mine.filter(n=>n.ch===ch);
+  return '<h1>🔔 '+t('alert_c')+'</h1><div class="sub">'+t('alert_sub')+'</div>'
+    + '<div class="pillTabs"><span class="ptab'+(ch==='all'?' on':'')+'" onclick="ui.tab=\'all\';render()">'+t('ch_all')+'</span>'
+    + '<span class="ptab'+(ch==='sms'?' on':'')+'" onclick="ui.tab=\'sms\';render()">✉️ SMS</span>'
+    + '<span class="ptab'+(ch==='wa'?' on':'')+'" onclick="ui.tab=\'wa\';render()">🟢 WhatsApp</span></div>'
+    + '<div class="card mt">'+(shown.length?shown.map(n=>notifRow(n)).join(''):'<div class="empty">'+t('no_alerts')+'</div>')+'</div>'
+    + '<div class="card"><b>'+t('log_t')+'</b><div class="sub">'+t('log_sub')+'</div></div>';
+}
+
+/* ============================ SUPPORT ============================ */
+function viewSupport(){
+  const faqs = ['q1','q2','q3','q4'];
+  const guide = [['g1','g1d'],['g2','g2d'],['g3','g3d'],['g4','g4d'],['g5','g5d'],['g6','g6d']];
+  return '<h1>🛡️ '+t('sup_t')+'</h1>'
+    + '<div class="grid g2 mt"><div class="card"><h2>📋 '+t('guide_t')+'</h2><div class="mt">'
+    + guide.map((g,i)=>'<div class="gstep" style="margin-top:'+(i?'14px':'0')+'"><div class="gnum">'+(i+1)+'</div><div><b>'+t(g[0])+'</b> <span class="sub">'+t(g[1])+'</span></div></div>').join('')
+    + '</div></div>'
+    + '<div><div class="card"><h2>❓ '+t('faq_t')+'</h2><div class="faq">'+faqs.map(f=>'<details><summary>'+t(f)+'</summary><div class="fa">'+t('a'+f.slice(1))+'</div></details>').join('')+'</div></div>'
+    + '<div class="card"><h2>📞 '+t('contact_t')+'</h2><div class="sub">'+t('contact_d')+'</div><div class="row mt"><button class="btn sm" onclick="toggleChat(true)">💬</button><a class="btn sec sm" href="tel:180012345678">☎️</a></div></div>'
+    + '<div class="card" style="background:#fffbeb; border-color:#fde68a"><div class="between"><div><b>'+t('policy_t')+'</b><div class="sub">'+t('pol1_d')+'</div></div><button class="btn sm amb" onclick="go(\'policy\')">'+t('read_pol')+' →</button></div></div></div></div>';
+}
+/* ---- Return & Refund Policy page ---- */
+function viewPolicy(){
+  const pols = [['pol1_t','pol1_d'],['pol2_t','pol2_d'],['pol3_t','pol3_d'],['pol4_t','pol4_d'],['pol5_t','pol5_d'],['pol6_t','pol6_d']];
+  return '<button class="hbtn mt" onclick="go(\'home\')">← '+t('support')+'</button>'
+    + '<h1>'+t('policy_t')+'</h1>'
+    + '<div class="card" style="background:linear-gradient(135deg,#fffbeb,#fef3c7); border-color:#f59e0b"><div class="row"><span style="font-size:26px">🛡️</span><b>KalaSetu Buyer Protection</b></div><div class="sub mt8">'+t('pol5_d')+'</div></div>'
+    + pols.map((x,i)=>'<div class="card"><div class="feat"><span class="fic">'+['📅','⚡','✅','🤔','🧵','📲'][i]+'</span><div><b>'+t(x[0])+'</b><div class="sub" style="margin-top:4px">'+t(x[1])+'</div></div></div></div>').join('')
+    + '<div class="card" style="background:var(--blud); border-color:#bfdbfe"><b>💰 '+t('pay_split_note')+'</b></div>';
+}
+function toggleChat(open){
+  const box = document.getElementById('chatBox');
+  ui.chatOpen = open===true ? true : !ui.chatOpen;
+  box.classList.toggle('open', ui.chatOpen);
+  document.getElementById('chatTitle').textContent = t('app_name')+' Support';
+  if(ui.chatOpen && !document.getElementById('chatMsgs').children.length){ chatPush('bot', t('chat_hi')); }
+}
+function chatPush(who, txt){
+  const el = document.createElement('div'); el.className='cmsg '+who; el.textContent = txt;
+  document.getElementById('chatMsgs').appendChild(el);
+  document.getElementById('chatMsgs').scrollTop = 99999;
+}
+function chatSend(){
+  const inp = document.getElementById('chatIn'); const v = inp.value.trim(); if(!v) return;
+  chatPush('me', v); inp.value='';
+  const low = v.toLowerCase();
+  let reply;
+  if(/otp|verify|सत्य|ధృవ/.test(low)) reply = t('a1');
+  else if(/price|कीमत|ధర/.test(low)) reply = t('a3');
+  else if(/pay|भुगतान|cash|upi/.test(low)) reply = t('a4');
+  else if(/lang|भाषा|భాష/.test(low)) reply = 'English / हिन्दी / తెలుగు / தமிழ் / ಕನ್ನಡ / मराठी / বাংলা / ગુજરાતી / മലയാളം — top selector.';
+  else reply = t('a2')+' '+t('contact_d');
+  setTimeout(()=>chatPush('bot', reply), 400);
+}
+
+/* ============================ ROUTER ============================ */
+function render(){
+  const m = me();
+  let body='';
+  const v = ui.view;
+  if(!m){
+    body = (v==='auth') ? viewAuth() : viewLanding();
+  } else {
+    if(v==='home'||v==='landing'||v==='auth') body = viewHome();
+    else if(v==='a_prods') body = viewArtisanProducts();
+    else if(v==='a_orders') body = (m.role==='customer') ? viewCustOrders() : viewArtisanOrders();
+    else if(v==='a_add') body = viewWizard();
+    else if(v==='v_home') body = viewVerifier();
+    else if(v==='l_home') body = viewLogistics();
+    else if(v==='c_home') body = viewStore();
+    else if(v==='c_product') body = viewProduct();
+    else if(v==='c_passport') body = viewPassport();
+    else if(v==='v_art') body = viewVArtisan();
+    else if(v==='v_prod') body = viewVProduct();
+    else if(v==='c_checkout') body = viewCheckout();
+    else if(v==='c_orders') body = viewCustOrders();
+    else if(v==='alerts'){ S.notes.forEach(n=>{ if(n.userId===S.session) n.read=true; }); save(); body = viewAlerts(); }
+    else if(v==='support') body = viewSupport();
+    else if(v==='policy') body = viewPolicy();
+    else body = viewHome();
+  }
+  document.getElementById('app').innerHTML = renderHeader() + netStrip() + body
+    + '<div class="foot">🪔 '+t('app_name')+' · demo prototype · <b style="cursor:pointer;user-select:none" onclick="toggleSim()">📴 '+(netDown()?t('sim_back'):t('sim'))+'</b></div>';
+  if(ui.chatOpen){ document.getElementById('chatBox').classList.add('open'); }
+}
+function defView(m){ return m.role==='verifier'?viewVerifier():m.role==='logistics'?viewLogistics():viewStore(); }
+
+
+/* ================= OFFLINE ASSISTANCE & AUTO-SYNC ================= */
+const NET = { sim:false, syncing:false };
+function netDown(){ return NET.sim || (typeof navigator!=='undefined' && navigator.onLine===false); }
+function lowConn(){ try{ const c=navigator.connection; return !!(c && /2g/.test(c.effectiveType||'')); }catch(e){ return false; } }
+function queueSync(type, label){
+  S.outbox.push({ id:uid(), ts:now(), type:type, label:label });
+  save(); render(); toast('📴 '+t('net_off')+' — saved, will sync');
+}
+function syncOutbox(){
+  if(netDown() || NET.syncing || !S.outbox.length) return;
+  NET.syncing = true; render();
+  const n = S.outbox.length;
+  setTimeout(function(){
+    S.outbox = []; S.lastSync = Date.now(); NET.syncing = false; save(); render();
+    toast(t('sync_a')+n+t('sync_b'));
+    const u = me(); if(u) notify(u.id,'inapp', t('sync_a')+n+t('sync_b'));
+  }, 900);
+}
+function toggleSim(){
+  NET.sim = !NET.sim; render();
+  if(!NET.sim) syncOutbox();          /* "network back" -> auto-sync */
+}
+function netStrip(){
+  let h='';
+  if(netDown()){
+    h += '<div style="background:#fffbeb;border-bottom:1px solid #fde68a;color:#92400e;padding:10px 14px;font-size:13.5px;line-height:1.45"><b>📴 '+t('net_off')+'</b> — '+t('off_banner')+'</div>';
+  } else if(lowConn()){
+    h += '<div style="background:#eff6ff;border-bottom:1px solid #bfdbfe;color:#1e40af;padding:8px 14px;font-size:13px">'+t('weak')+'</div>';
+  }
+  if(S.outbox && S.outbox.length){
+    h += '<div class="row" style="background:#eef2ff;border-bottom:1px solid #c7d2fe;color:#312e81;padding:10px 14px;font-size:13.5px"><span>📤 <b>'+S.outbox.length+'</b> '+t('pend')+'</span>'
+      + (netDown() ? '' : '<button class="btn sm" style="margin-left:10px" onclick="syncOutbox()">'+(NET.syncing?'⏳ syncing…':t('sync_now'))+'</button>')
+      + (S.lastSync ? '<span style="margin-left:10px;opacity:.75">'+t('last')+': '+new Date(S.lastSync).toLocaleTimeString()+'</span>' : '')
+      + '</div>';
+  }
+  return h;
+}
+/* real network events (deployed) */
+try{
+  window.addEventListener('online', function(){ NET.sim=false; render(); syncOutbox(); });
+  window.addEventListener('offline', function(){ render(); });
+}catch(e){}
+/* service worker: full offline reload after first visit (needs https hosting) */
+try{
+  if(typeof navigator!=='undefined' && navigator.serviceWorker && typeof location!=='undefined' && /^https?:$/.test(location.protocol)){
+    navigator.serviceWorker.register('sw.js').catch(function(){});
+  }
+}catch(e){}
+
+render();
+</script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a3c5e7120a141f33',t:'MTc4OTYyNDk1Mg=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
